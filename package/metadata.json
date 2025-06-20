@@ -1,0 +1,21 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "ogspain@gmail.com",
+                "Name": "ogspain"
+            }
+        ],
+        "Category": "Date and Time",
+        "Description": "Daytiles calendar widget for the desktop.",
+        "Icon": "view-calendar",
+        "Id": "com.ogspain.daytiles",
+        "License": "MIT",
+        "Name": "Daytiles",
+        "Version": "0.1",
+        "Website": "https://github.com/Chamartin3/daytiles"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API": "5.0",
+    "X-Plasma-MainScript": "ui/main.qml"
+}
