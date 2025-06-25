@@ -1,0 +1,21 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font-family: sans-serif;
+    overflow: hidden;
+}
+
+#root {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#root svg {
+    max-width: 100%;
+    max-height: 100%;
+}
