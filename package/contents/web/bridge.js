@@ -1,0 +1,41 @@
+import { Daytiles, Layout, Shape } from "./daytiles.js";
+
+const root = document.getElementById("root");
+let dt = null;
+
+const layouts = { Month: Layout.Month, Week: Layout.Week, Weekday: Layout.Weekday, Custom: Layout.Custom };
+const shapes  = { Rectangle: Shape.Rectangle, RoundedRect: Shape.RoundedRect, Circle: Shape.Circle, Diamond: Shape.Diamond };
+
+function toOpts(cfg) {
+    return {
+        layout:    layouts[cfg.layout]    ?? Layout.Month,
+        shape:     shapes[cfg.shape]      ?? Shape.RoundedRect,
+        startDate: cfg.startDate,
+        endDate:   cfg.endDate,
+        daySize:   cfg.daySize,
+        gap:       cfg.gap,
+    };
+}
+
+function rebuild(cfg, events) {
+    root.innerHTML = "";
+    dt = new Daytiles(toOpts(cfg));
+    if (Array.isArray(events) && events.length) dt.addEvents(events);
+    if (typeof dt.onTileClick === "function") {
+        dt.onTileClick((info) => {
+            // Bridged to QML via console.log fallback until QtWebChannel lands.
+            console.log("DAYTILES_CLICK " + JSON.stringify(info));
+        });
+    }
+    dt.render(root);
+}
+
+window.daytilesBridge = {
+    applyConfig(cfg, events) { rebuild(cfg, events); },
+    setEvents(events)        { if (dt) { dt.clearEvents(); dt.addEvents(events); dt.update(); } },
+};
+
+// Initial empty render so the page is not blank during startup.
+rebuild({ layout: "Month", shape: "RoundedRect",
+          startDate: new Date().toISOString().slice(0,10),
+          endDate:   new Date().toISOString().slice(0,10) }, []);
