@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+    <kcfgfile name=""/>
+
+    <group name="General">
+        <entry name="layout" type="String">
+            <default>Month</default>
+        </entry>
+        <entry name="startDate" type="String">
+            <default>2025-01-01</default>
+        </entry>
+        <entry name="endDate" type="String">
+            <default>2025-12-31</default>
+        </entry>
+    </group>
+
+    <group name="Appearance">
+        <entry name="shape" type="String">
+            <default>RoundedRect</default>
+        </entry>
+        <entry name="daySize" type="Int">
+            <default>16</default>
+        </entry>
+        <entry name="gap" type="Int">
+            <default>2</default>
+        </entry>
+        <entry name="paletteJson" type="String">
+            <default>{}</default>
+        </entry>
+    </group>
+
+    <group name="Events">
+        <entry name="eventsJson" type="String">
+            <default>[]</default>
+        </entry>
+    </group>
+</kcfg>
