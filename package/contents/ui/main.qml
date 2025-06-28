@@ -10,6 +10,11 @@ Item {
         catch (e) { return []; }
     }
 
+    function parsedPalette() {
+        try { return JSON.parse(plasmoid.configuration.paletteJson || "{}"); }
+        catch (e) { return {}; }
+    }
+
     function buildConfig() {
         return {
             layout:    plasmoid.configuration.layout,
@@ -18,6 +23,7 @@ Item {
             endDate:   plasmoid.configuration.endDate,
             daySize:   plasmoid.configuration.daySize,
             gap:       plasmoid.configuration.gap,
+            palette:   parsedPalette(),
         };
     }
 
@@ -41,6 +47,7 @@ Item {
             function onEndDateChanged()   { view.config = root.buildConfig(); view.apply(); }
             function onDaySizeChanged()   { view.config = root.buildConfig(); view.apply(); }
             function onGapChanged()       { view.config = root.buildConfig(); view.apply(); }
+            function onPaletteJsonChanged(){ view.config = root.buildConfig(); view.apply(); }
             function onEventsJsonChanged(){ view.events = root.parsedEvents(); view.apply(); }
         }
     }
