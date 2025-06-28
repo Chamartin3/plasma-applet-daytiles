@@ -7,6 +7,7 @@ const layouts = { Month: Layout.Month, Week: Layout.Week, Weekday: Layout.Weekda
 const shapes  = { Rectangle: Shape.Rectangle, RoundedRect: Shape.RoundedRect, Circle: Shape.Circle, Diamond: Shape.Diamond };
 
 function toOpts(cfg) {
+    const palette = cfg.palette || {};
     return {
         layout:    layouts[cfg.layout]    ?? Layout.Month,
         shape:     shapes[cfg.shape]      ?? Shape.RoundedRect,
@@ -14,6 +15,12 @@ function toOpts(cfg) {
         endDate:   cfg.endDate,
         daySize:   cfg.daySize,
         gap:       cfg.gap,
+        colors: {
+            base:    palette.base    || "#3a3a3a",
+            past:    palette.past    || "#2a2a2a",
+            future:  palette.future  || "#4a4a4a",
+            weekend: palette.weekend || undefined,
+        },
     };
 }
 
