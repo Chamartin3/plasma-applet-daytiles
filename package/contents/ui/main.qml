@@ -21,6 +21,8 @@ Item {
         };
     }
 
+    Plasmoid.compactRepresentation: CompactRepresentation {}
+
     Plasmoid.fullRepresentation: DaytilesView {
         id: view
         Layout.minimumWidth: 320
