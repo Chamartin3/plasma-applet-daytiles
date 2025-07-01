@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import org.kde.plasma.plasmoid 2.0
 
@@ -27,28 +28,60 @@ Item {
         };
     }
 
+    function appendEvent(entry) {
+        const arr = parsedEvents();
+        arr.push(entry);
+        plasmoid.configuration.eventsJson = JSON.stringify(arr);
+    }
+
     Plasmoid.compactRepresentation: CompactRepresentation {}
 
-    Plasmoid.fullRepresentation: DaytilesView {
-        id: view
+    Plasmoid.fullRepresentation: ColumnLayout {
         Layout.minimumWidth: 320
         Layout.minimumHeight: 240
         Layout.preferredWidth: 480
-        Layout.preferredHeight: 320
+        Layout.preferredHeight: 360
+        spacing: 0
 
-        config: root.buildConfig()
-        events: root.parsedEvents()
+        DaytilesView {
+            id: view
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-        Connections {
-            target: plasmoid.configuration
-            function onLayoutChanged()    { view.config = root.buildConfig(); view.apply(); }
-            function onShapeChanged()     { view.config = root.buildConfig(); view.apply(); }
-            function onStartDateChanged() { view.config = root.buildConfig(); view.apply(); }
-            function onEndDateChanged()   { view.config = root.buildConfig(); view.apply(); }
-            function onDaySizeChanged()   { view.config = root.buildConfig(); view.apply(); }
-            function onGapChanged()       { view.config = root.buildConfig(); view.apply(); }
-            function onPaletteJsonChanged(){ view.config = root.buildConfig(); view.apply(); }
-            function onEventsJsonChanged(){ view.events = root.parsedEvents(); view.apply(); }
+            config: root.buildConfig()
+            events: root.parsedEvents()
+
+            onTileClicked: function(info) {
+                quick.presetDate = info && info.date ? info.date : "";
+                quick.open(quick.presetDate);
+            }
+
+            Connections {
+                target: plasmoid.configuration
+                function onLayoutChanged()      { view.config = root.buildConfig(); view.apply(); }
+                function onShapeChanged()       { view.config = root.buildConfig(); view.apply(); }
+                function onStartDateChanged()   { view.config = root.buildConfig(); view.apply(); }
+                function onEndDateChanged()    { view.config = root.buildConfig(); view.apply(); }
+                function onDaySizeChanged()     { view.config = root.buildConfig(); view.apply(); }
+                function onGapChanged()         { view.config = root.buildConfig(); view.apply(); }
+                function onPaletteJsonChanged() { view.config = root.buildConfig(); view.apply(); }
+                function onEventsJsonChanged()  { view.events = root.parsedEvents(); view.apply(); }
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Button {
+                text: qsTr("Add event")
+                onClicked: quick.open("")
+            }
+            Item { Layout.fillWidth: true }
+        }
+
+        QuickAdd {
+            id: quick
+            Layout.fillWidth: true
+            onSaved: function(entry) { root.appendEvent(entry); }
         }
     }
 }
