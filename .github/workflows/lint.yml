@@ -1,0 +1,27 @@
+name: lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: validate metadata.json
+        run: |
+          python3 -c "import json,sys; json.load(open('package/metadata.json')); print('ok')"
+      - name: validate eventsJson default
+        run: |
+          python3 - <<'PY'
+          import json, xml.etree.ElementTree as ET
+          tree = ET.parse('package/contents/config/main.xml')
+          ns = {'k':'http://www.kde.org/standards/kcfg/1.0'}
+          for e in tree.iter('{http://www.kde.org/standards/kcfg/1.0}entry'):
+              t = e.attrib.get('type','')
+              d = e.find('k:default', ns)
+              if d is not None and t == 'String' and d.text and d.text.startswith(('{','[')):
+                  json.loads(d.text)
+          print('ok')
+          PY
