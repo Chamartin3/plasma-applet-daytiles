@@ -25,6 +25,7 @@ function toOpts(cfg) {
 }
 
 function rebuild(cfg, events) {
+    if (!cfg || !cfg.startDate || !cfg.endDate) return;
     root.innerHTML = "";
     dt = new Daytiles(toOpts(cfg));
     if (Array.isArray(events) && events.length) dt.addEvents(events);
