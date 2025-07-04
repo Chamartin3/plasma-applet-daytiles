@@ -13,6 +13,9 @@ WebEngineView {
     settings.localContentCanAccessFileUrls: true
     settings.localContentCanAccessRemoteUrls: false
     settings.javascriptEnabled: true
+    settings.webGLEnabled: false
+    settings.errorPageEnabled: false
+    settings.spatialNavigationEnabled: false
 
     function apply() {
         const payload = JSON.stringify({ cfg: config, events: events });
