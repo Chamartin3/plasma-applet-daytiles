@@ -1,7 +1,10 @@
 PLASMOID_ID := com.ogspain.daytiles
 PKG := package
 
-.PHONY: install upgrade uninstall package run
+.PHONY: install upgrade uninstall package run sync
+
+sync:
+	cp vendor/daytiles/index.js $(PKG)/contents/web/daytiles.js
 
 install:
 	kpackagetool5 -t Plasma/Applet --install $(PKG)
