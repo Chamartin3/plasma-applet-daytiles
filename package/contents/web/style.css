@@ -2,9 +2,14 @@ html, body {
     margin: 0;
     padding: 0;
     background: transparent;
-    color: inherit;
+    color: var(--fg, #eee);
     font-family: sans-serif;
     overflow: hidden;
+}
+
+:root {
+    --fg: #eee;
+    --bg: transparent;
 }
 
 #root {
