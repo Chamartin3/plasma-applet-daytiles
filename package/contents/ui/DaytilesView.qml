@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtWebEngine 1.10
+import org.kde.plasma.core 2.0 as PlasmaCore
 
 WebEngineView {
     id: view
@@ -18,7 +19,11 @@ WebEngineView {
     settings.spatialNavigationEnabled: false
 
     function apply() {
-        const payload = JSON.stringify({ cfg: config, events: events });
+        const cfgWithTheme = Object.assign({}, config, {
+            themeFg: PlasmaCore.Theme.textColor.toString(),
+            themeBg: PlasmaCore.Theme.backgroundColor.toString(),
+        });
+        const payload = JSON.stringify({ cfg: cfgWithTheme, events: events });
         runJavaScript("window.daytilesBridge && window.daytilesBridge.applyConfig("
                       + "(" + payload + ").cfg, (" + payload + ").events)");
     }
