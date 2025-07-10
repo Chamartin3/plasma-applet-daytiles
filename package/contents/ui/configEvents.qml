@@ -21,10 +21,13 @@ Item {
         anchors.fill: parent
         spacing: Kirigami.Units.smallSpacing
 
-        ListView {
-            id: list
+        ScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+        ListView {
+            id: list
+            anchors.fill: parent
             clip: true
             model: ListModel { id: events }
             delegate: RowLayout {
@@ -39,6 +42,7 @@ Item {
                     onClicked: { events.remove(index); persist(); }
                 }
             }
+        }
         }
 
         Kirigami.FormLayout {
