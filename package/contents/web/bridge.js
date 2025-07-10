@@ -24,8 +24,14 @@ function toOpts(cfg) {
     };
 }
 
+function applyTheme(cfg) {
+    if (cfg.themeFg) document.documentElement.style.setProperty("--fg", cfg.themeFg);
+    if (cfg.themeBg) document.documentElement.style.setProperty("--bg", cfg.themeBg);
+}
+
 function rebuild(cfg, events) {
     if (!cfg || !cfg.startDate || !cfg.endDate) return;
+    applyTheme(cfg);
     root.innerHTML = "";
     dt = new Daytiles(toOpts(cfg));
     if (Array.isArray(events) && events.length) dt.addEvents(events);
