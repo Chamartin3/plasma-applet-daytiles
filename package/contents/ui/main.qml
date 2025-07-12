@@ -52,8 +52,16 @@ Item {
             events: root.parsedEvents()
 
             onTileClicked: function(info) {
-                quick.presetDate = info && info.date ? info.date : "";
-                quick.open(quick.presetDate);
+                const date = info && info.date ? info.date : "";
+                const matching = root.parsedEvents().filter(function(e) {
+                    return e.start === date || (e.end && e.start <= date && date <= e.end);
+                });
+                if (matching.length) {
+                    dayList.open(date, matching);
+                } else {
+                    quick.presetDate = date;
+                    quick.open(date);
+                }
             }
 
             Connections {
@@ -76,6 +84,12 @@ Item {
                 onClicked: quick.open("")
             }
             Item { Layout.fillWidth: true }
+        }
+
+        EventListPanel {
+            id: dayList
+            Layout.fillWidth: true
+            onAddRequested: function(date) { quick.open(date); }
         }
 
         QuickAdd {
