@@ -68,6 +68,45 @@ Item {
                 }
             }
         }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            Button {
+                text: i18n("Export…")
+                onClicked: exportArea.visible = !exportArea.visible
+            }
+            Button {
+                text: i18n("Import")
+                enabled: importArea.text.length > 0
+                onClicked: form.importJson(importArea.text)
+            }
+        }
+
+        TextArea {
+            id: exportArea
+            Layout.fillWidth: true
+            visible: false
+            readOnly: true
+            text: store.text
+        }
+
+        TextArea {
+            id: importArea
+            Layout.fillWidth: true
+            placeholderText: i18n("Paste events JSON to import…")
+        }
+    }
+
+    function importJson(raw) {
+        try {
+            const arr = JSON.parse(raw);
+            if (!Array.isArray(arr)) return;
+            events.clear();
+            for (const e of arr) events.append(e);
+            persist();
+            importArea.text = "";
+        } catch (e) {}
     }
 
     function persist() {
