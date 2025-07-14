@@ -37,8 +37,11 @@ function rebuild(cfg, events) {
     if (Array.isArray(events) && events.length) dt.addEvents(events);
     if (typeof dt.onTileClick === "function") {
         dt.onTileClick((info) => {
-            // Bridged to QML via console.log fallback until QtWebChannel lands.
-            console.log("DAYTILES_CLICK " + JSON.stringify(info));
+            const safe = {
+                date:   info && info.date   ? String(info.date)   : "",
+                events: info && info.events ? info.events         : [],
+            };
+            console.log("DAYTILES_CLICK " + JSON.stringify(safe));
         });
     }
     dt.render(root);
