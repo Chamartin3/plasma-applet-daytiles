@@ -1,5 +1,6 @@
 PLASMOID_ID := com.ogspain.daytiles
 PKG := package
+VERSION := $(shell python3 -c "import json; print(json.load(open('$(PKG)/metadata.json'))['KPlugin']['Version'])")
 
 .PHONY: install upgrade uninstall package run sync
 
@@ -19,4 +20,4 @@ run:
 	plasmoidviewer -a $(PKG)
 
 package:
-	cd $(PKG) && zip -r ../$(PLASMOID_ID).plasmoid . -x '*.swp' '*~'
+	cd $(PKG) && zip -r ../$(PLASMOID_ID)-$(VERSION).plasmoid . -x '*.swp' '*~'
