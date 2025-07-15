@@ -15,4 +15,10 @@ MouseArea {
         anchors.fill: parent
         source: "view-calendar"
     }
+
+    PlasmaCore.ToolTipArea {
+        anchors.fill: parent
+        mainText: i18n("Daytiles")
+        subText: Qt.formatDate(new Date(), "dddd, MMMM d, yyyy")
+    }
 }
