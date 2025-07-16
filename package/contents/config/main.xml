@@ -10,10 +10,10 @@
             <default>Month</default>
         </entry>
         <entry name="startDate" type="String">
-            <default>2025-01-01</default>
+            <default code="true">QDate::currentDate().toString("yyyy-01-01")</default>
         </entry>
         <entry name="endDate" type="String">
-            <default>2025-12-31</default>
+            <default code="true">QDate::currentDate().toString("yyyy-12-31")</default>
         </entry>
     </group>
 
