@@ -53,6 +53,8 @@ window.daytilesBridge = {
 };
 
 // Initial empty render so the page is not blank during startup.
+const today = new Date().toISOString().slice(0,10);
+const yearStart = today.slice(0,4) + "-01-01";
+const yearEnd   = today.slice(0,4) + "-12-31";
 rebuild({ layout: "Month", shape: "RoundedRect",
-          startDate: new Date().toISOString().slice(0,10),
-          endDate:   new Date().toISOString().slice(0,10) }, []);
+          startDate: yearStart, endDate: yearEnd }, []);
