@@ -16,10 +16,11 @@ function toOpts(cfg) {
         daySize:   cfg.daySize,
         gap:       cfg.gap,
         colors: {
-            base:    palette.base    || "#3a3a3a",
+            base:    palette.base    || cfg.themeFg || "#3a3a3a",
             past:    palette.past    || "#2a2a2a",
             future:  palette.future  || "#4a4a4a",
             weekend: palette.weekend || undefined,
+            alt:     palette.alt     || undefined,
         },
     };
 }
