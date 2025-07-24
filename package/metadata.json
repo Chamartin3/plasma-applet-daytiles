@@ -12,7 +12,7 @@
         "Id": "com.ogspain.daytiles",
         "License": "MIT",
         "Name": "Daytiles",
-        "Version": "0.2",
+        "Version": "0.3",
         "Website": "https://github.com/Chamartin3/daytiles"
     },
     "KPackageStructure": "Plasma/Applet",
