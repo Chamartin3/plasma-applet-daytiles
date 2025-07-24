@@ -102,8 +102,15 @@ Item {
         try {
             const arr = JSON.parse(raw);
             if (!Array.isArray(arr)) return;
-            events.clear();
-            for (const e of arr) events.append(e);
+            for (const e of arr) {
+                if (!e || typeof e.start !== "string") continue;
+                events.append({
+                    start: e.start,
+                    end:   e.end   || "",
+                    color: e.color || "",
+                    note:  e.note  || "",
+                });
+            }
             persist();
             importArea.text = "";
         } catch (e) {}
