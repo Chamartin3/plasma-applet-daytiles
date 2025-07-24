@@ -30,6 +30,9 @@ WebEngineView {
 
     onLoadingChanged: function(info) {
         if (info.status === WebEngineView.LoadSucceededStatus) apply();
+        else if (info.status === WebEngineView.LoadFailedStatus) {
+            console.warn("daytiles: page failed to load:", info.errorString);
+        }
     }
 
     onJavaScriptConsoleMessage: function(level, message, lineNumber, sourceID) {
