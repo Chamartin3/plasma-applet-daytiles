@@ -48,9 +48,12 @@ function rebuild(cfg, events) {
     dt.render(root);
 }
 
+let lastCfg = null;
+
 window.daytilesBridge = {
-    applyConfig(cfg, events) { rebuild(cfg, events); },
+    applyConfig(cfg, events) { lastCfg = cfg; rebuild(cfg, events); },
     setEvents(events)        { if (dt) { dt.clearEvents(); dt.addEvents(events); dt.update(); } },
+    refresh()                { if (lastCfg) rebuild(lastCfg, []); },
 };
 
 // Initial empty render so the page is not blank during startup.
