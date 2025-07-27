@@ -17,7 +17,10 @@ uninstall:
 	kpackagetool5 -t Plasma/Applet --remove $(PLASMOID_ID)
 
 run:
-	plasmoidviewer -a $(PKG)
+	plasmoidviewer $(PKG)
+
+run-installed:
+	plasmoidviewer -a $(PLASMOID_ID)
 
 package:
 	cd $(PKG) && zip -r ../$(PLASMOID_ID)-$(VERSION).plasmoid . -x '*.swp' '*~'
