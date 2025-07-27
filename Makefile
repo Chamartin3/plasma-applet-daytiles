@@ -11,15 +11,13 @@ install:
 	kpackagetool5 -t Plasma/Applet --install $(PKG)
 
 upgrade:
-	kpackagetool5 -t Plasma/Applet --upgrade $(PKG)
+	kpackagetool5 -t Plasma/Applet --upgrade $(PKG) 2>/dev/null || \
+	    kpackagetool5 -t Plasma/Applet --install $(PKG)
 
 uninstall:
 	kpackagetool5 -t Plasma/Applet --remove $(PLASMOID_ID)
 
-run:
-	plasmoidviewer $(PKG)
-
-run-installed:
+run: upgrade
 	plasmoidviewer -a $(PLASMOID_ID)
 
 package:
