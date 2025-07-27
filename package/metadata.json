@@ -12,10 +12,13 @@
         "Id": "com.ogspain.daytiles",
         "License": "MIT",
         "Name": "Daytiles",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
         "Version": "0.3",
         "Website": "https://github.com/Chamartin3/daytiles"
     },
     "KPackageStructure": "Plasma/Applet",
-    "X-Plasma-API": "5.0",
+    "X-Plasma-API": "declarativeappletscript",
     "X-Plasma-MainScript": "ui/main.qml"
 }
