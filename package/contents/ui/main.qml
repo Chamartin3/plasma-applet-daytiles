@@ -1,10 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 
 Item {
     id: root
+
+    Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
 
     function parsedEvents() {
         try { return JSON.parse(plasmoid.configuration.eventsJson || "[]"); }
@@ -17,13 +20,16 @@ Item {
     }
 
     function buildConfig() {
+        const y = new Date().getFullYear();
+        const start = plasmoid.configuration.startDate || (y + "-01-01");
+        const end   = plasmoid.configuration.endDate   || (y + "-12-31");
         return {
-            layout:    plasmoid.configuration.layout,
-            shape:     plasmoid.configuration.shape,
-            startDate: plasmoid.configuration.startDate,
-            endDate:   plasmoid.configuration.endDate,
-            daySize:   plasmoid.configuration.daySize,
-            gap:       plasmoid.configuration.gap,
+            layout:    plasmoid.configuration.layout || "Month",
+            shape:     plasmoid.configuration.shape  || "RoundedRect",
+            startDate: start,
+            endDate:   end,
+            daySize:   plasmoid.configuration.daySize || 16,
+            gap:       plasmoid.configuration.gap || 2,
             palette:   parsedPalette(),
         };
     }
@@ -37,19 +43,31 @@ Item {
     Plasmoid.compactRepresentation: CompactRepresentation {}
 
     Plasmoid.fullRepresentation: ColumnLayout {
-        Layout.minimumWidth: 320
-        Layout.minimumHeight: 240
-        Layout.preferredWidth: 480
-        Layout.preferredHeight: 360
-        spacing: 0
+        Layout.minimumWidth: 480
+        Layout.minimumHeight: 320
+        Layout.preferredWidth: 820
+        Layout.preferredHeight: 600
+        spacing: 4
 
         DaytilesView {
             id: view
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            config: root.buildConfig()
-            events: root.parsedEvents()
+            config: {
+                plasmoid.configuration.layout;
+                plasmoid.configuration.shape;
+                plasmoid.configuration.startDate;
+                plasmoid.configuration.endDate;
+                plasmoid.configuration.daySize;
+                plasmoid.configuration.gap;
+                plasmoid.configuration.paletteJson;
+                return root.buildConfig();
+            }
+            events: {
+                plasmoid.configuration.eventsJson;
+                return root.parsedEvents();
+            }
 
             onTileClicked: function(info) {
                 const date = info && info.date ? info.date : "";
@@ -63,26 +81,19 @@ Item {
                     quick.open(date);
                 }
             }
-
-            Connections {
-                target: plasmoid.configuration
-                function onLayoutChanged()      { view.config = root.buildConfig(); view.apply(); }
-                function onShapeChanged()       { view.config = root.buildConfig(); view.apply(); }
-                function onStartDateChanged()   { view.config = root.buildConfig(); view.apply(); }
-                function onEndDateChanged()    { view.config = root.buildConfig(); view.apply(); }
-                function onDaySizeChanged()     { view.config = root.buildConfig(); view.apply(); }
-                function onGapChanged()         { view.config = root.buildConfig(); view.apply(); }
-                function onPaletteJsonChanged() { view.config = root.buildConfig(); view.apply(); }
-                function onEventsJsonChanged()  { view.events = root.parsedEvents(); view.apply(); }
-            }
         }
 
         RowLayout {
             Layout.fillWidth: true
+            Label {
+                text: qsTr("Click a tile to add an event")
+                opacity: 0.6
+            }
+            Item { Layout.fillWidth: true }
             Button {
-                text: qsTr("Add event")
-                icon.name: "list-add"
-                onClicked: quick.open("")
+                text: qsTr("Configure")
+                icon.name: "configure"
+                onClicked: plasmoid.action("configure").trigger()
             }
             Item { Layout.fillWidth: true }
             Label {

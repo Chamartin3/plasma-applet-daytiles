@@ -18,7 +18,7 @@ uninstall:
 	kpackagetool5 -t Plasma/Applet --remove $(PLASMOID_ID)
 
 run: upgrade
-	plasmoidviewer -a $(PLASMOID_ID)
+	plasmoidviewer -a $(PLASMOID_ID) -s 900x650
 
 package:
 	cd $(PKG) && zip -r ../$(PLASMOID_ID)-$(VERSION).plasmoid . -x '*.swp' '*~'
