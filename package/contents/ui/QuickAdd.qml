@@ -28,13 +28,11 @@ Frame {
         Kirigami.FormLayout {
             Layout.fillWidth: true
 
-            TextField {
+            DateField {
                 id: startField
                 Kirigami.FormData.label: qsTr("Start:")
-                placeholderText: "YYYY-MM-DD"
-                validator: RegExpValidator { regExp: /^\d{4}-\d{2}-\d{2}$/ }
             }
-            TextField {
+            DateField {
                 id: endField
                 Kirigami.FormData.label: qsTr("End:")
                 placeholderText: qsTr("optional")

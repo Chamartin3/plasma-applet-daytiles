@@ -16,15 +16,15 @@ Kirigami.FormLayout {
         model: ["Month", "Week", "Weekday", "Custom"]
     }
 
-    TextField {
+    DateField {
         id: startField
-        Kirigami.FormData.label: i18n("Start date (YYYY-MM-DD):")
+        Kirigami.FormData.label: i18n("Start date:")
         placeholderText: "2025-01-01"
     }
 
-    TextField {
+    DateField {
         id: endField
-        Kirigami.FormData.label: i18n("End date (YYYY-MM-DD):")
+        Kirigami.FormData.label: i18n("End date:")
         placeholderText: "2025-12-31"
     }
 }
