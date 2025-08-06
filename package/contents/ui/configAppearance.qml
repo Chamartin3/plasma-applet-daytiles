@@ -33,47 +33,55 @@ Kirigami.FormLayout {
 
     TextField { id: paletteStore; visible: false }
 
-    TextField {
+    ColorField {
         id: baseField
-        Kirigami.FormData.label: i18n("Base color:")
+        Kirigami.FormData.label: i18n("Day color:")
         placeholderText: "#3a3a3a"
         onTextChanged: form.writePalette()
     }
-    TextField {
-        id: pastField
-        Kirigami.FormData.label: i18n("Past color:")
-        placeholderText: "#2a2a2a"
+    ColorField {
+        id: currentField
+        Kirigami.FormData.label: i18n("Today color:")
+        placeholderText: "#FFD700"
         onTextChanged: form.writePalette()
     }
-    TextField {
-        id: futureField
-        Kirigami.FormData.label: i18n("Future color:")
-        placeholderText: "#4a4a4a"
+    ColorField {
+        id: eventField
+        Kirigami.FormData.label: i18n("Default event color:")
+        placeholderText: "#ff5577"
         onTextChanged: form.writePalette()
     }
-    TextField {
+    ColorField {
         id: weekendField
         Kirigami.FormData.label: i18n("Weekend color:")
+        placeholderText: i18n("optional")
+        onTextChanged: form.writePalette()
+    }
+    ColorField {
+        id: alternationField
+        Kirigami.FormData.label: i18n("Alternation color:")
         placeholderText: i18n("optional")
         onTextChanged: form.writePalette()
     }
 
     function writePalette() {
         const obj = {};
-        if (baseField.text)    obj.base    = baseField.text;
-        if (pastField.text)    obj.past    = pastField.text;
-        if (futureField.text)  obj.future  = futureField.text;
-        if (weekendField.text) obj.weekend = weekendField.text;
+        if (baseField.text)        obj.base        = baseField.text;
+        if (currentField.text)     obj.current     = currentField.text;
+        if (eventField.text)       obj.event       = eventField.text;
+        if (weekendField.text)     obj.weekend     = weekendField.text;
+        if (alternationField.text) obj.alternation = alternationField.text;
         paletteStore.text = JSON.stringify(obj);
     }
 
     Component.onCompleted: {
         try {
             const p = JSON.parse(paletteStore.text || "{}");
-            baseField.text    = p.base    || "";
-            pastField.text    = p.past    || "";
-            futureField.text  = p.future  || "";
-            weekendField.text = p.weekend || "";
+            baseField.text        = p.base        || "";
+            currentField.text     = p.current     || "";
+            eventField.text       = p.event       || "";
+            weekendField.text     = p.weekend     || "";
+            alternationField.text = p.alternation || "";
         } catch (e) {}
     }
 }

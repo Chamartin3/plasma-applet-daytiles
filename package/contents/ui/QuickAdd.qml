@@ -37,10 +37,9 @@ Frame {
                 Kirigami.FormData.label: qsTr("End:")
                 placeholderText: qsTr("optional")
             }
-            TextField {
+            ColorField {
                 id: colorField
                 Kirigami.FormData.label: qsTr("Color:")
-                placeholderText: "#ff5577"
             }
             TextField { id: noteField;  Kirigami.FormData.label: qsTr("Note:") }
         }
