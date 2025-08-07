@@ -58,71 +58,6 @@ var DTLib = (() => {
     Shape: () => Shape
   });
 
-  // src/alternation.ts
-  var AlternationMode = /* @__PURE__ */ ((AlternationMode3) => {
-    AlternationMode3["None"] = "none";
-    AlternationMode3["Day"] = "day";
-    AlternationMode3["Week"] = "week";
-    AlternationMode3["Month"] = "month";
-    AlternationMode3["Year"] = "year";
-    AlternationMode3["Custom"] = "custom";
-    return AlternationMode3;
-  })(AlternationMode || {});
-  function alternationBucket(ctx, mode, size) {
-    switch (mode) {
-      case "day" /* Day */:
-        return ctx.dayOfYear;
-      case "week" /* Week */:
-        return ctx.weekOfYear;
-      case "month" /* Month */:
-        return ctx.month;
-      case "year" /* Year */:
-        return ctx.year;
-      case "custom" /* Custom */:
-        return Math.floor(ctx.dayOfYear / Math.max(1, size));
-      case "none" /* None */:
-      default:
-        return -1;
-    }
-  }
-  function shouldAlternate(ctx, alternation) {
-    if (alternation.mode === "none" /* None */) return false;
-    const bucket = alternationBucket(ctx, alternation.mode, alternation.size);
-    return bucket >= 0 && bucket % 2 === 0;
-  }
-
-  // src/colors.ts
-  var DATE_BOX_CLASS = "dateBox";
-  var FUTURE_DAY_CLASS = "future-day";
-  var PRESENT_DAY_CLASS = "present-day";
-  var PAST_DAY_CLASS = "past-day";
-  function getColor(dateContext, colorSettings) {
-    var _a, _b, _c, _d;
-    const { current: currentColor, dayColor, alternation } = colorSettings;
-    const weekdayColors = (_b = (_a = colorSettings.highlight) == null ? void 0 : _a.weekdays) != null ? _b : {};
-    const monthColors = (_d = (_c = colorSettings.highlight) == null ? void 0 : _c.months) != null ? _d : {};
-    const highlightCurrent = colorSettings.highlightCurrent !== false;
-    if (highlightCurrent && dateContext.isPresent) return currentColor;
-    const weekdayMatch = weekdayColors[dateContext.dayOfWeek];
-    if (weekdayMatch) return weekdayMatch;
-    const monthMatch = monthColors[dateContext.month];
-    if (monthMatch) return monthMatch;
-    if (shouldAlternate(dateContext, alternation)) {
-      return alternation.color;
-    }
-    return dayColor;
-  }
-  function getClasses(ctx) {
-    const classList = [DATE_BOX_CLASS];
-    if (ctx.isFuture) classList.push(FUTURE_DAY_CLASS);
-    if (ctx.isPresent) {
-      classList.push(PRESENT_DAY_CLASS);
-    } else if (ctx.isPast) {
-      classList.push(PAST_DAY_CLASS);
-    }
-    return classList;
-  }
-
   // src/dates.ts
   function stringToDate(datestring, year, last = false) {
     const [month, day] = datestring.split("-");
@@ -152,12 +87,12 @@ var DTLib = (() => {
       endDate: toDate(final, dateYear, true)
     };
   }
-  function getEvent(date, events) {
+  function getEvents(date, events) {
     var _a;
     const y = String(date.getFullYear()).padStart(4, "0");
     const m = String(date.getMonth() + 1).padStart(2, "0");
     const d = String(date.getDate()).padStart(2, "0");
-    return (_a = events[`${y}-${m}-${d}`]) != null ? _a : {};
+    return (_a = events[`${y}-${m}-${d}`]) != null ? _a : [];
   }
   var MS_PER_DAY = 864e5;
   function dayOfYear(date) {
@@ -242,6 +177,39 @@ var DTLib = (() => {
     }
   }
 
+  // src/alternation.ts
+  var AlternationMode = /* @__PURE__ */ ((AlternationMode3) => {
+    AlternationMode3["None"] = "none";
+    AlternationMode3["Day"] = "day";
+    AlternationMode3["Week"] = "week";
+    AlternationMode3["Month"] = "month";
+    AlternationMode3["Year"] = "year";
+    AlternationMode3["Custom"] = "custom";
+    return AlternationMode3;
+  })(AlternationMode || {});
+  function alternationBucket(ctx, mode, size) {
+    switch (mode) {
+      case "day" /* Day */:
+        return ctx.dayOfYear;
+      case "week" /* Week */:
+        return ctx.weekOfYear;
+      case "month" /* Month */:
+        return ctx.month;
+      case "year" /* Year */:
+        return ctx.year;
+      case "custom" /* Custom */:
+        return Math.floor(ctx.dayOfYear / Math.max(1, size));
+      case "none" /* None */:
+      default:
+        return -1;
+    }
+  }
+  function shouldAlternate(ctx, alternation) {
+    if (alternation.mode === "none" /* None */) return false;
+    const bucket = alternationBucket(ctx, alternation.mode, alternation.size);
+    return bucket >= 0 && bucket % 2 === 0;
+  }
+
   // src/settings.ts
   var Layout = /* @__PURE__ */ ((Layout2) => {
     Layout2["Month"] = "month";
@@ -273,6 +241,9 @@ var DTLib = (() => {
         size: 7
       },
       defaultEventColor: "#ff5577",
+      heatmap: false,
+      heatmapLow: 0.2,
+      heatmapHigh: 0.35,
       highlight: {
         weekdays: {},
         months: {}
@@ -280,11 +251,67 @@ var DTLib = (() => {
     }
   };
 
+  // src/colors.ts
+  var DATE_BOX_CLASS = "DayTiles--day";
+  var FUTURE_DAY_CLASS = "DayTiles--day--future";
+  var PRESENT_DAY_CLASS = "DayTiles--day--present";
+  var PAST_DAY_CLASS = "DayTiles--day--past";
+  function getColor(dateContext, colorSettings) {
+    var _a, _b, _c, _d;
+    const { current: currentColor, dayColor, alternation } = colorSettings;
+    const weekdayColors = (_b = (_a = colorSettings.highlight) == null ? void 0 : _a.weekdays) != null ? _b : {};
+    const monthColors = (_d = (_c = colorSettings.highlight) == null ? void 0 : _c.months) != null ? _d : {};
+    const highlightCurrent = colorSettings.highlightCurrent !== false;
+    if (highlightCurrent && dateContext.isPresent) return currentColor;
+    const weekdayMatch = weekdayColors[dateContext.dayOfWeek];
+    if (weekdayMatch) return weekdayMatch;
+    const monthMatch = monthColors[dateContext.month];
+    if (monthMatch) return monthMatch;
+    if (shouldAlternate(dateContext, alternation)) {
+      return alternation.color;
+    }
+    return dayColor;
+  }
+  function parseHex(hex) {
+    let h = hex.trim().replace(/^#/, "");
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    if (h.length !== 6) return null;
+    const n = parseInt(h, 16);
+    if (Number.isNaN(n)) return null;
+    return [n >> 16 & 255, n >> 8 & 255, n & 255];
+  }
+  function toHex(rgb) {
+    return "#" + rgb.map((v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join("");
+  }
+  function lerpHex(a, b, t) {
+    const ca = parseHex(a);
+    const cb = parseHex(b);
+    if (!ca || !cb) return b;
+    const k = Math.max(0, Math.min(1, t));
+    return toHex([
+      ca[0] + (cb[0] - ca[0]) * k,
+      ca[1] + (cb[1] - ca[1]) * k,
+      ca[2] + (cb[2] - ca[2]) * k
+    ]);
+  }
+  function getClasses(ctx) {
+    const classList = [DATE_BOX_CLASS];
+    if (ctx.isFuture) classList.push(FUTURE_DAY_CLASS);
+    if (ctx.isPresent) {
+      classList.push(PRESENT_DAY_CLASS);
+    } else if (ctx.isPast) {
+      classList.push(PAST_DAY_CLASS);
+    }
+    return classList;
+  }
+
   // src/tooltip.ts
   var TOOLTIP_ID = "daytiles-tooltip";
-  var TOOLTIP_CLASS = "tooltip-box";
+  var TOOLTIP_CLASS = "DayTiles--tooltip";
   var DATA_DATE_ATTR = "data-date";
   var DATA_NOTE_ATTR = "data-note";
+  var DATA_COUNT_ATTR = "data-count";
+  var DATA_WEIGHT_ATTR = "data-weight";
   function ensureTooltip() {
     let el = document.getElementById(TOOLTIP_ID);
     if (!el) {
@@ -314,11 +341,27 @@ var DTLib = (() => {
     const target = event.target;
     const date = target.getAttribute(DATA_DATE_ATTR);
     const note = target.getAttribute(DATA_NOTE_ATTR);
+    const count = target.getAttribute(DATA_COUNT_ATTR);
+    const weight = target.getAttribute(DATA_WEIGHT_ATTR);
     const el = ensureTooltip();
     el.innerHTML = "";
     const dateLine = document.createElement("div");
     dateLine.textContent = date;
     el.appendChild(dateLine);
+    if (count) {
+      const countLine = document.createElement("div");
+      countLine.textContent = `${count} events`;
+      countLine.style.opacity = "0.85";
+      countLine.style.marginTop = "2px";
+      el.appendChild(countLine);
+    }
+    if (weight) {
+      const weightLine = document.createElement("div");
+      weightLine.textContent = `weight: ${weight}`;
+      weightLine.style.opacity = "0.85";
+      weightLine.style.marginTop = "2px";
+      el.appendChild(weightLine);
+    }
     if (note) {
       const noteLine = document.createElement("div");
       noteLine.textContent = note;
@@ -337,14 +380,50 @@ var DTLib = (() => {
     if (el) el.style.display = "none";
   }
 
-  // src/draw.ts
-  var SVG_NS2 = "http://www.w3.org/2000/svg";
-  var ROW_LABEL_CLASS = "row-label";
-  var ROW_LABEL_GAP = 8;
-  function drawDateTile(dateToDraw, { x, y, size, shape, overwrites, colorSettings, onClick }) {
+  // src/tile.ts
+  function sumWeights(events) {
+    var _a;
+    let total = 0;
+    for (const e of events) total += (_a = e.weight) != null ? _a : 1;
+    return total;
+  }
+  function dominantTypeCount(events) {
+    var _a;
+    const counts = /* @__PURE__ */ new Map();
+    for (const e of events) counts.set(e.type, ((_a = counts.get(e.type)) != null ? _a : 0) + 1);
+    let dom;
+    let max = 0;
+    for (const [t, c] of counts) {
+      if (c > max) {
+        max = c;
+        dom = t;
+      }
+    }
+    return { type: dom, count: max };
+  }
+  function resolveTileFill(events, baseColor, colorSettings, maxWeight) {
+    var _a, _b, _c, _d;
+    if (events.length === 0) return baseColor;
+    const typeColors = (_a = colorSettings.eventTypeColors) != null ? _a : {};
+    if (!colorSettings.heatmap) {
+      const first = events[0];
+      return first.color || (first.type ? typeColors[first.type] : void 0) || colorSettings.defaultEventColor;
+    }
+    const { type } = dominantTypeCount(events);
+    const typeColor = (_b = type ? typeColors[type] : void 0) != null ? _b : colorSettings.defaultEventColor;
+    const low = (_c = colorSettings.heatmapLow) != null ? _c : 0.2;
+    const high = (_d = colorSettings.heatmapHigh) != null ? _d : 0.35;
+    const lowEnd = lerpHex("#ffffff", typeColor, low);
+    const highEnd = lerpHex(typeColor, "#000000", high);
+    const w = sumWeights(events);
+    const t = maxWeight > 1 ? (w - 1) / (maxWeight - 1) : 1;
+    return lerpHex(lowEnd, highEnd, t);
+  }
+  function drawDateTile(dateToDraw, { x, y, size, shape, events, colorSettings, maxWeight, onClick }) {
     const dateContext = getDateContext(dateToDraw);
     const tile = createTile(shape, x, y, size);
-    const dayColor = overwrites.color || getColor(dateContext, colorSettings);
+    const baseColor = getColor(dateContext, colorSettings);
+    const dayColor = resolveTileFill(events, baseColor, colorSettings, maxWeight);
     const dayClasses = getClasses(dateContext);
     tile.setAttribute("fill", dayColor);
     const fade = dateContext.isPresent ? void 0 : dateContext.isPast ? colorSettings.pastFade : colorSettings.futureFade;
@@ -352,18 +431,28 @@ var DTLib = (() => {
       tile.style.filter = `brightness(${fade})`;
     }
     tile.setAttribute("data-date", dateToDraw.toDateString());
-    if (overwrites.note) tile.setAttribute("data-note", overwrites.note);
+    const joinedNote = events.map((e) => e.note).filter((n) => Boolean(n)).join(" \u2022 ");
+    if (joinedNote) tile.setAttribute("data-note", joinedNote);
+    if (events.length > 1) tile.setAttribute("data-count", String(events.length));
+    const total = sumWeights(events);
+    if (events.length > 0 && total !== events.length) {
+      tile.setAttribute("data-weight", String(total));
+    }
     tile.addEventListener("mouseover", showDateTooltip);
     tile.addEventListener("mouseout", hideDateTooltip);
     if (onClick) {
       tile.style.cursor = "pointer";
       tile.addEventListener("click", (domEvent) => {
-        onClick({ date: new Date(dateToDraw), event: overwrites, domEvent });
+        onClick({ date: new Date(dateToDraw), events, domEvent });
       });
     }
     dayClasses.forEach((c) => tile.classList.add(c));
     return tile;
   }
+
+  // src/labels.ts
+  var ROW_LABEL_CLASS = "DayTiles--rowLabel";
+  var ROW_LABEL_GAP = 8;
   var MONTH_NAMES = [
     "Jan",
     "Feb",
@@ -401,7 +490,12 @@ var DTLib = (() => {
         return "";
     }
   }
+
+  // src/draw.ts
+  var SVG_NS2 = "http://www.w3.org/2000/svg";
+  var CONTAINER_CLASS = "DayTilesContainer";
   function drawCalendar(svgElement, settings, onTileClick) {
+    var _a;
     const {
       layout,
       daysPerRow,
@@ -417,6 +511,7 @@ var DTLib = (() => {
       year,
       colors: colorSettings
     } = settings;
+    svgElement.classList.add(CONTAINER_CLASS);
     svgElement.innerHTML = "";
     const { startDate, endDate } = getRangeDates(begin, end, year);
     const currentDate = new Date(startDate);
@@ -483,6 +578,13 @@ var DTLib = (() => {
       }
       offsetX = maxWidth + ROW_LABEL_GAP;
     }
+    let maxWeight = 0;
+    for (const { date } of cells) {
+      const list = getEvents(date, events);
+      let w = 0;
+      for (const e of list) w += (_a = e.weight) != null ? _a : 1;
+      if (w > maxWeight) maxWeight = w;
+    }
     for (const { date, row: r, col: c } of cells) {
       svgElement.appendChild(
         drawDateTile(date, {
@@ -490,8 +592,9 @@ var DTLib = (() => {
           y: r * (squareSize + gap),
           size: squareSize,
           shape,
-          overwrites: getEvent(date, events),
+          events: getEvents(date, events),
           colorSettings,
+          maxWeight,
           onClick: onTileClick
         })
       );
@@ -593,7 +696,7 @@ var DTLib = (() => {
       });
     }
     flattenEvents(defaultColor, typeColors) {
-      var _a, _b, _c, _d, _e;
+      var _a, _b, _c, _d;
       const out = {};
       for (const entry of this.events) {
         const start = toDate2(entry.start);
@@ -604,12 +707,14 @@ var DTLib = (() => {
         while (cursor.getTime() <= end.getTime()) {
           const key = dateKey(cursor);
           const note = (_c = entry.note) != null ? _c : key;
-          const existing = out[key];
-          out[key] = {
-            color: (_d = existing == null ? void 0 : existing.color) != null ? _d : color,
-            note: (existing == null ? void 0 : existing.note) ? `${existing.note} \u2022 ${note}` : note,
-            wiki: (_e = existing == null ? void 0 : existing.wiki) != null ? _e : entry.wiki
-          };
+          const list = (_d = out[key]) != null ? _d : out[key] = [];
+          list.push({
+            color,
+            note,
+            wiki: entry.wiki,
+            type: entry.type,
+            weight: entry.weight
+          });
           cursor.setTime(cursor.getTime() + MS_PER_DAY2);
         }
       }
