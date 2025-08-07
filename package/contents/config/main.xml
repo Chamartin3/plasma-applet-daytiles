@@ -6,6 +6,9 @@
     <kcfgfile name=""/>
 
     <group name="General">
+        <entry name="title" type="String">
+            <default></default>
+        </entry>
         <entry name="layout" type="String">
             <default>Month</default>
         </entry>

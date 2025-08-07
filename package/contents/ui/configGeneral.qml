@@ -6,9 +6,16 @@ import org.kde.kirigami 2.20 as Kirigami
 Kirigami.FormLayout {
     id: form
 
+    property alias cfg_title:     titleField.text
     property alias cfg_layout:    layoutCombo.currentText
     property alias cfg_startDate: startField.text
     property alias cfg_endDate:   endField.text
+
+    TextField {
+        id: titleField
+        Kirigami.FormData.label: i18n("Title:")
+        placeholderText: i18n("optional")
+    }
 
     ComboBox {
         id: layoutCombo

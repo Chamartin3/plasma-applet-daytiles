@@ -49,6 +49,16 @@ Item {
         Layout.preferredHeight: 600
         spacing: 4
 
+        Label {
+            Layout.fillWidth: true
+            text: plasmoid.configuration.title || ""
+            visible: text.length > 0
+            font.pixelSize: 18
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideRight
+        }
+
         DaytilesView {
             id: view
             Layout.fillWidth: true
