@@ -18,6 +18,15 @@
         <entry name="endDate" type="String">
             <default></default>
         </entry>
+        <entry name="daysPerRow" type="Int">
+            <default>21</default>
+        </entry>
+        <entry name="startDayOfWeek" type="Int">
+            <default>1</default>
+        </entry>
+        <entry name="showLabels" type="Bool">
+            <default>false</default>
+        </entry>
     </group>
 
     <group name="Appearance">
@@ -31,6 +40,21 @@
             <default>2</default>
         </entry>
         <entry name="paletteJson" type="String">
+            <default>{}</default>
+        </entry>
+        <entry name="pastFade" type="Double">
+            <default>1.0</default>
+        </entry>
+        <entry name="futureFade" type="Double">
+            <default>1.0</default>
+        </entry>
+        <entry name="highlightCurrent" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="heatmap" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="eventTypeColorsJson" type="String">
             <default>{}</default>
         </entry>
     </group>
