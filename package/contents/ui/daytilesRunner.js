@@ -883,6 +883,36 @@ Date.prototype.toDateString = function() {
     return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d);
 };
 
+function _parseHexColor(s) {
+    if (!s || typeof s !== "string") return null;
+    var m = s.trim();
+    if (m.charAt(0) === "#") m = m.substring(1);
+    if (m.length === 3) m = m.charAt(0)+m.charAt(0)+m.charAt(1)+m.charAt(1)+m.charAt(2)+m.charAt(2);
+    if (!/^[0-9a-fA-F]{6}$/.test(m)) return null;
+    return { r: parseInt(m.substring(0,2),16), g: parseInt(m.substring(2,4),16), b: parseInt(m.substring(4,6),16) };
+}
+function _hex2(n) { var h = Math.max(0, Math.min(255, Math.round(n))).toString(16); return h.length < 2 ? "0"+h : h; }
+function _scaleColor(hex, factor) {
+    var c = _parseHexColor(hex);
+    if (!c) return hex;
+    return "#" + _hex2(c.r * factor) + _hex2(c.g * factor) + _hex2(c.b * factor);
+}
+function _bakeFilterFade(el) {
+    if (!el) return;
+    if (el.style && el.style.filter) {
+        var m = /brightness\(\s*([0-9.]+)\s*\)/.exec(el.style.filter);
+        if (m) {
+            var f = parseFloat(m[1]);
+            if (!isNaN(f) && f !== 1) {
+                var fill = el.attrs && el.attrs.fill;
+                if (fill) el.attrs.fill = _scaleColor(fill, f);
+            }
+            delete el.style.filter;
+        }
+    }
+    if (el.children) for (var i = 0; i < el.children.length; ++i) _bakeFilterFade(el.children[i]);
+}
+
 function _renderInternal(cfg, events) {
     if (!cfg || !cfg.startDate || !cfg.endDate) return { svg: "", tiles: [], width: 0, height: 0 };
     var palette = cfg.palette || {};
@@ -933,6 +963,7 @@ function _renderInternal(cfg, events) {
     var root = new ShimElement("svg", "http://www.w3.org/2000/svg");
     root.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     dt.render(root);
+    _bakeFilterFade(root);
     var tiles = [];
     _collectTiles(root, tiles);
     var w = parseInt(root.attrs.width || "0") || 0;
