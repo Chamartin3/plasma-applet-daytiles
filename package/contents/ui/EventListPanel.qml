@@ -11,6 +11,7 @@ Frame {
     property var entries: []
 
     signal addRequested(string date)
+    signal removeRequested(var entry)
 
     function open(date, list) {
         forDate = date;
@@ -29,10 +30,19 @@ Frame {
 
         Repeater {
             model: panel.entries
-            delegate: Label {
+            delegate: RowLayout {
                 Layout.fillWidth: true
-                text: (modelData.note || "") + (modelData.color ? "  (" + modelData.color + ")" : "")
-                wrapMode: Text.WordWrap
+                Label {
+                    Layout.fillWidth: true
+                    text: (modelData.note || qsTr("(no note)")) + (modelData.color ? "  (" + modelData.color + ")" : "")
+                    wrapMode: Text.WordWrap
+                }
+                Button {
+                    text: qsTr("Delete")
+                    icon.name: "edit-delete"
+                    flat: true
+                    onClicked: panel.removeRequested(modelData)
+                }
             }
         }
 
