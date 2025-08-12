@@ -45,7 +45,14 @@ RowLayout {
     ColorDialog {
         id: dialog
         title: qsTr("Choose color")
-        showAlphaChannel: true
-        onAccepted: field.text = dialog.color.toString()
+        showAlphaChannel: false
+        onAccepted: {
+            const c = dialog.color;
+            const hex = function(v) {
+                const h = Math.round(v * 255).toString(16);
+                return h.length < 2 ? "0" + h : h;
+            };
+            field.text = "#" + hex(c.r) + hex(c.g) + hex(c.b);
+        }
     }
 }
