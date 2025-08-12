@@ -6,10 +6,14 @@ import org.kde.kirigami 2.20 as Kirigami
 Kirigami.FormLayout {
     id: form
 
-    property alias cfg_shape:       shapeCombo.currentText
-    property alias cfg_daySize:     sizeSpin.value
-    property alias cfg_gap:         gapSpin.value
-    property alias cfg_paletteJson: paletteStore.text
+    property alias cfg_shape:            shapeCombo.currentText
+    property alias cfg_daySize:          sizeSpin.value
+    property alias cfg_gap:              gapSpin.value
+    property alias cfg_paletteJson:      paletteStore.text
+    property alias cfg_highlightCurrent: highlightTodayCheck.checked
+    property alias cfg_heatmap:          heatmapCheck.checked
+    property double cfg_pastFade:   1.0
+    property double cfg_futureFade: 1.0
 
     ComboBox {
         id: shapeCombo
@@ -62,6 +66,43 @@ Kirigami.FormLayout {
         Kirigami.FormData.label: i18n("Alternation color:")
         placeholderText: i18n("optional")
         onTextChanged: form.writePalette()
+    }
+
+    CheckBox {
+        id: highlightTodayCheck
+        Kirigami.FormData.label: i18n("Today:")
+        text: i18n("Highlight today's tile")
+        checked: true
+    }
+
+    RowLayout {
+        Kirigami.FormData.label: i18n("Past fade:")
+        Slider {
+            id: pastFadeSlider
+            from: 0.2; to: 1.0; stepSize: 0.05
+            value: form.cfg_pastFade
+            onValueChanged: form.cfg_pastFade = value
+            Layout.preferredWidth: 160
+        }
+        Label { text: pastFadeSlider.value.toFixed(2) }
+    }
+
+    RowLayout {
+        Kirigami.FormData.label: i18n("Future fade:")
+        Slider {
+            id: futureFadeSlider
+            from: 0.2; to: 1.0; stepSize: 0.05
+            value: form.cfg_futureFade
+            onValueChanged: form.cfg_futureFade = value
+            Layout.preferredWidth: 160
+        }
+        Label { text: futureFadeSlider.value.toFixed(2) }
+    }
+
+    CheckBox {
+        id: heatmapCheck
+        Kirigami.FormData.label: i18n("Heatmap mode:")
+        text: i18n("Tint tiles by event count")
     }
 
     function writePalette() {
