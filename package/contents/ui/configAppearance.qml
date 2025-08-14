@@ -12,8 +12,8 @@ Kirigami.FormLayout {
     property alias cfg_paletteJson:      paletteStore.text
     property alias cfg_highlightCurrent: highlightTodayCheck.checked
     property alias cfg_heatmap:          heatmapCheck.checked
-    property double cfg_pastFade:   1.0
-    property double cfg_futureFade: 1.0
+    property alias cfg_pastFade:   pastFadeSlider.value
+    property alias cfg_futureFade: futureFadeSlider.value
 
     ComboBox {
         id: shapeCombo
@@ -80,8 +80,7 @@ Kirigami.FormLayout {
         Slider {
             id: pastFadeSlider
             from: 0.2; to: 1.0; stepSize: 0.05
-            value: form.cfg_pastFade
-            onValueChanged: form.cfg_pastFade = value
+            value: 1.0
             Layout.preferredWidth: 160
         }
         Label { text: pastFadeSlider.value.toFixed(2) }
@@ -92,8 +91,7 @@ Kirigami.FormLayout {
         Slider {
             id: futureFadeSlider
             from: 0.2; to: 1.0; stepSize: 0.05
-            value: form.cfg_futureFade
-            onValueChanged: form.cfg_futureFade = value
+            value: 1.0
             Layout.preferredWidth: 160
         }
         Label { text: futureFadeSlider.value.toFixed(2) }
