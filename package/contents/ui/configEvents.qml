@@ -8,50 +8,77 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: true
 
-    property alias cfg_eventsJson: store.text
+    property alias cfg_eventsJson:           store.text
+    property alias cfg_eventTypeColorsJson:  typesStore.text
 
     function parseEvents() {
         try { return JSON.parse(store.text || "[]"); } catch (e) { return []; }
     }
     function writeEvents(arr) { store.text = JSON.stringify(arr); }
 
-    TextField { id: store; visible: false }
+    function parseTypes() {
+        try { return JSON.parse(typesStore.text || "{}"); } catch (e) { return {}; }
+    }
+    function writeTypes() {
+        const obj = {};
+        for (let i = 0; i < types.count; ++i) {
+            const t = types.get(i);
+            if (t.name) obj[t.name] = t.color || "";
+        }
+        typesStore.text = JSON.stringify(obj);
+    }
+
+    TextField { id: store;      visible: false }
+    TextField { id: typesStore; visible: false }
 
     ColumnLayout {
         anchors.fill: parent
         spacing: Kirigami.Units.smallSpacing
 
+        Label { text: i18n("Events"); font.bold: true }
+
         ScrollView {
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: 180
 
-        ListView {
-            id: list
-            anchors.fill: parent
-            clip: true
-            model: ListModel { id: events }
-            delegate: RowLayout {
-                width: list.width
-                Label {
-                    Layout.fillWidth: true
-                    text: model.start + (model.end ? "  →  " + model.end : "")
-                          + (model.note ? "   " + model.note : "")
-                }
-                Button {
-                    text: i18n("Remove")
-                    onClicked: { events.remove(index); persist(); }
+            ListView {
+                id: list
+                anchors.fill: parent
+                clip: true
+                model: ListModel { id: events }
+                delegate: RowLayout {
+                    width: list.width
+                    Label {
+                        Layout.fillWidth: true
+                        text: model.start
+                              + (model.end  ? "  →  " + model.end : "")
+                              + (model.type ? "  [" + model.type + "]" : "")
+                              + (model.note ? "   " + model.note : "")
+                    }
+                    Button {
+                        text: i18n("Remove")
+                        flat: true
+                        icon.name: "edit-delete"
+                        onClicked: { events.remove(index); persist(); }
+                    }
                 }
             }
-        }
         }
 
         Kirigami.FormLayout {
             Layout.fillWidth: true
 
-            TextField { id: addStart; Kirigami.FormData.label: i18n("Start:"); placeholderText: "YYYY-MM-DD" }
-            TextField { id: addEnd;   Kirigami.FormData.label: i18n("End:");   placeholderText: i18n("optional") }
-            TextField { id: addColor; Kirigami.FormData.label: i18n("Color:"); placeholderText: "#ff5577" }
-            TextField { id: addNote;  Kirigami.FormData.label: i18n("Note:") }
+            DateField { id: addStart; Kirigami.FormData.label: i18n("Start:") }
+            DateField { id: addEnd;   Kirigami.FormData.label: i18n("End:");   placeholderText: i18n("optional") }
+            ColorField { id: addColor; Kirigami.FormData.label: i18n("Color:"); placeholderText: i18n("optional") }
+            ComboBox {
+                id: addType
+                Kirigami.FormData.label: i18n("Type:")
+                editable: true
+                model: typeNames
+                currentIndex: -1
+            }
+            TextField { id: addNote; Kirigami.FormData.label: i18n("Note:") }
 
             Button {
                 text: i18n("Add event")
@@ -59,15 +86,64 @@ Item {
                 onClicked: {
                     events.append({
                         start: addStart.text,
-                        end:   addEnd.text || "",
+                        end:   addEnd.text   || "",
                         color: addColor.text || "",
+                        type:  addType.editText || "",
                         note:  addNote.text  || "",
                     });
-                    addStart.text = ""; addEnd.text = ""; addColor.text = ""; addNote.text = "";
+                    addStart.text = ""; addEnd.text = "";
+                    addColor.text = ""; addType.editText = ""; addNote.text = "";
                     persist();
                 }
             }
         }
+
+        Kirigami.Separator { Layout.fillWidth: true }
+
+        Label { text: i18n("Event types"); font.bold: true }
+
+        ListModel { id: typeNames }
+
+        ScrollView {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 140
+
+            ListView {
+                id: typesList
+                anchors.fill: parent
+                clip: true
+                model: ListModel { id: types }
+                delegate: RowLayout {
+                    width: typesList.width
+                    spacing: 6
+                    TextField {
+                        Layout.preferredWidth: 120
+                        text: model.name
+                        placeholderText: i18n("name")
+                        onEditingFinished: { types.setProperty(index, "name", text); refreshTypeNames(); writeTypes(); }
+                    }
+                    ColorField {
+                        Layout.fillWidth: true
+                        text: model.color
+                        onTextChanged: { if (text !== model.color) { types.setProperty(index, "color", text); writeTypes(); } }
+                    }
+                    Button {
+                        text: i18n("Remove")
+                        flat: true
+                        icon.name: "edit-delete"
+                        onClicked: { types.remove(index); refreshTypeNames(); writeTypes(); }
+                    }
+                }
+            }
+        }
+
+        Button {
+            text: i18n("Add type")
+            icon.name: "list-add"
+            onClicked: { types.append({ name: "", color: "" }); }
+        }
+
+        Kirigami.Separator { Layout.fillWidth: true }
 
         RowLayout {
             Layout.fillWidth: true
@@ -108,6 +184,7 @@ Item {
                     start: e.start,
                     end:   e.end   || "",
                     color: e.color || "",
+                    type:  e.type  || "",
                     note:  e.note  || "",
                 });
             }
@@ -123,14 +200,35 @@ Item {
             const obj = { start: e.start };
             if (e.end)   obj.end   = e.end;
             if (e.color) obj.color = e.color;
+            if (e.type)  obj.type  = e.type;
             if (e.note)  obj.note  = e.note;
             arr.push(obj);
         }
         writeEvents(arr);
     }
 
+    function refreshTypeNames() {
+        typeNames.clear();
+        for (let i = 0; i < types.count; ++i) {
+            const n = types.get(i).name;
+            if (n) typeNames.append({ text: n });
+        }
+    }
+
     Component.onCompleted: {
         const arr = parseEvents();
-        for (const e of arr) events.append(e);
+        for (const e of arr) events.append({
+            start: e.start || "",
+            end:   e.end   || "",
+            color: e.color || "",
+            type:  e.type  || "",
+            note:  e.note  || "",
+        });
+        const t = parseTypes();
+        for (const k in t) {
+            if (Object.prototype.hasOwnProperty.call(t, k))
+                types.append({ name: k, color: t[k] || "" });
+        }
+        refreshTypeNames();
     }
 }
