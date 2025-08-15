@@ -31,15 +31,20 @@ Item {
     TextField { id: store;      visible: false }
     TextField { id: typesStore; visible: false }
 
-    ColumnLayout {
+    ScrollView {
         anchors.fill: parent
+        clip: true
+        contentWidth: availableWidth
+
+    ColumnLayout {
+        width: form.width
         spacing: Kirigami.Units.smallSpacing
 
         Label { text: i18n("Events"); font.bold: true }
 
-        ScrollView {
+        Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: 180
+            Layout.preferredHeight: Math.min(180, Math.max(60, events.count * 32 + 16))
 
             ListView {
                 id: list
@@ -104,9 +109,9 @@ Item {
 
         ListModel { id: typeNames }
 
-        ScrollView {
+        Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: 140
+            Layout.preferredHeight: Math.min(180, Math.max(60, types.count * 40 + 16))
 
             ListView {
                 id: typesList
@@ -162,6 +167,7 @@ Item {
         TextArea {
             id: exportArea
             Layout.fillWidth: true
+            Layout.preferredHeight: 100
             visible: false
             readOnly: true
             text: store.text
@@ -170,8 +176,10 @@ Item {
         TextArea {
             id: importArea
             Layout.fillWidth: true
+            Layout.preferredHeight: 80
             placeholderText: i18n("Paste events JSON to import…")
         }
+    }
     }
 
     function importJson(raw) {
