@@ -33,35 +33,60 @@ Item {
 
     ScrollView {
         anchors.fill: parent
+        anchors.margins: Kirigami.Units.largeSpacing
         clip: true
         contentWidth: availableWidth
 
     ColumnLayout {
-        width: form.width
-        spacing: Kirigami.Units.smallSpacing
+        width: form.width - Kirigami.Units.largeSpacing * 2
+        spacing: Kirigami.Units.largeSpacing
 
         Label { text: i18n("Events"); font.bold: true }
 
         Frame {
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(180, Math.max(60, events.count * 32 + 16))
+            Layout.preferredHeight: Math.min(280, Math.max(60, events.count * 48 + 16))
 
             ListView {
                 id: list
                 anchors.fill: parent
                 clip: true
+                spacing: 4
                 model: ListModel { id: events }
                 delegate: RowLayout {
                     width: list.width
-                    Label {
-                        Layout.fillWidth: true
+                    spacing: 4
+                    DateField {
+                        Layout.preferredWidth: 150
                         text: model.start
-                              + (model.end  ? "  →  " + model.end : "")
-                              + (model.type ? "  [" + model.type + "]" : "")
-                              + (model.note ? "   " + model.note : "")
+                        onTextChanged: if (text !== model.start) { events.setProperty(index, "start", text); persist(); }
+                    }
+                    DateField {
+                        Layout.preferredWidth: 150
+                        text: model.end
+                        placeholderText: i18n("end")
+                        onTextChanged: if (text !== model.end) { events.setProperty(index, "end", text); persist(); }
+                    }
+                    ColorField {
+                        Layout.preferredWidth: 160
+                        text: model.color
+                        onTextChanged: if (text !== model.color) { events.setProperty(index, "color", text); persist(); }
+                    }
+                    ComboBox {
+                        Layout.preferredWidth: 110
+                        editable: true
+                        model: typeNames
+                        editText: modelData ? "" : ""
+                        Component.onCompleted: editText = events.get(index).type || ""
+                        onEditTextChanged: if (editText !== events.get(index).type) { events.setProperty(index, "type", editText); persist(); }
+                    }
+                    TextField {
+                        Layout.fillWidth: true
+                        text: model.note
+                        placeholderText: i18n("note")
+                        onTextChanged: if (text !== model.note) { events.setProperty(index, "note", text); persist(); }
                     }
                     Button {
-                        text: i18n("Remove")
                         flat: true
                         icon.name: "edit-delete"
                         onClicked: { events.remove(index); persist(); }
