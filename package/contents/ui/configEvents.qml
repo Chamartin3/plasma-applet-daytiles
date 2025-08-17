@@ -32,13 +32,15 @@ Item {
     TextField { id: typesStore; visible: false }
 
     ScrollView {
+        id: scroll
         anchors.fill: parent
         anchors.margins: Kirigami.Units.largeSpacing
         clip: true
         contentWidth: availableWidth
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
     ColumnLayout {
-        width: form.width - Kirigami.Units.largeSpacing * 2
+        width: scroll.availableWidth - Kirigami.Units.largeSpacing
         spacing: Kirigami.Units.largeSpacing
 
         Label { text: i18n("Events"); font.bold: true }
