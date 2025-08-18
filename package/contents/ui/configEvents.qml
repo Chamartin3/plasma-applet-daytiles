@@ -34,13 +34,16 @@ Item {
     ScrollView {
         id: scroll
         anchors.fill: parent
-        anchors.margins: Kirigami.Units.largeSpacing
+        anchors.leftMargin: Kirigami.Units.largeSpacing
+        anchors.topMargin: Kirigami.Units.largeSpacing
+        anchors.bottomMargin: Kirigami.Units.largeSpacing
+        anchors.rightMargin: 0
         clip: true
         contentWidth: availableWidth
         ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
     ColumnLayout {
-        width: scroll.availableWidth - Kirigami.Units.largeSpacing
+        width: scroll.availableWidth - Kirigami.Units.smallSpacing
         spacing: Kirigami.Units.largeSpacing
 
         Label { text: i18n("Events"); font.bold: true }
