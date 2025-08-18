@@ -81,7 +81,7 @@ Item {
                         Layout.preferredWidth: 110
                         editable: true
                         model: typeNames
-                        editText: modelData ? "" : ""
+                        currentIndex: -1
                         Component.onCompleted: editText = events.get(index).type || ""
                         onEditTextChanged: if (editText !== events.get(index).type) { events.setProperty(index, "type", editText); persist(); }
                     }
@@ -112,6 +112,8 @@ Item {
                 editable: true
                 model: typeNames
                 currentIndex: -1
+                displayText: ""
+                Component.onCompleted: editText = ""
             }
             TextField { id: addNote; Kirigami.FormData.label: i18n("Note:") }
 
@@ -127,7 +129,7 @@ Item {
                         note:  addNote.text  || "",
                     });
                     addStart.text = ""; addEnd.text = "";
-                    addColor.text = ""; addType.editText = ""; addNote.text = "";
+                    addColor.text = ""; addType.currentIndex = -1; addType.editText = ""; addNote.text = "";
                     persist();
                 }
             }
