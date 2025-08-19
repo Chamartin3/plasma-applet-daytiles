@@ -42,6 +42,10 @@ Item {
             futureFade:       plasmoid.configuration.futureFade,
             highlightCurrent: plasmoid.configuration.highlightCurrent !== false,
             heatmap:          plasmoid.configuration.heatmap === true,
+            heatmapLow:       plasmoid.configuration.heatmapLow,
+            heatmapHigh:      plasmoid.configuration.heatmapHigh,
+            alternationMode:  plasmoid.configuration.alternationMode || "month",
+            alternationSize:  plasmoid.configuration.alternationSize || 7,
             eventTypeColors:  parsedTypeColors(),
             palette:          parsedPalette(),
         };
@@ -102,6 +106,10 @@ Item {
                 plasmoid.configuration.futureFade;
                 plasmoid.configuration.highlightCurrent;
                 plasmoid.configuration.heatmap;
+                plasmoid.configuration.heatmapLow;
+                plasmoid.configuration.heatmapHigh;
+                plasmoid.configuration.alternationMode;
+                plasmoid.configuration.alternationSize;
                 plasmoid.configuration.paletteJson;
                 plasmoid.configuration.eventTypeColorsJson;
                 return root.buildConfig();
