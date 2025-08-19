@@ -936,8 +936,13 @@ function _renderInternal(cfg, events) {
                     months:   {},
                 },
             };
-            if (palette.alternation) {
-                c.alternation = { mode: "month", color: palette.alternation, size: 7 };
+            var altMode = (cfg.alternationMode || "month").toLowerCase();
+            if (altMode !== "none" && palette.alternation) {
+                c.alternation = {
+                    mode: altMode,
+                    color: palette.alternation,
+                    size: (typeof cfg.alternationSize === "number" && cfg.alternationSize > 0) ? cfg.alternationSize : 7,
+                };
             }
             if (typeof cfg.pastFade === "number")        c.pastFade = cfg.pastFade;
             if (typeof cfg.futureFade === "number")      c.futureFade = cfg.futureFade;

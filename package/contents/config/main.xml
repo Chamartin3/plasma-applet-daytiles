@@ -54,6 +54,18 @@
         <entry name="heatmap" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="heatmapLow" type="Double">
+            <default>0.2</default>
+        </entry>
+        <entry name="heatmapHigh" type="Double">
+            <default>0.35</default>
+        </entry>
+        <entry name="alternationMode" type="String">
+            <default>month</default>
+        </entry>
+        <entry name="alternationSize" type="Int">
+            <default>7</default>
+        </entry>
         <entry name="eventTypeColorsJson" type="String">
             <default>{}</default>
         </entry>
