@@ -15,7 +15,6 @@ Frame {
     function open(date) {
         startField.text = date || presetDate || "";
         endField.text = "";
-        colorField.text = "";
         typeField.text = "";
         noteField.text = "";
         visible = true;
@@ -38,10 +37,6 @@ Frame {
                 Kirigami.FormData.label: qsTr("End:")
                 placeholderText: qsTr("optional")
             }
-            ColorField {
-                id: colorField
-                Kirigami.FormData.label: qsTr("Color:")
-            }
             TextField { id: typeField; Kirigami.FormData.label: qsTr("Type:"); placeholderText: qsTr("optional") }
             TextField { id: noteField;  Kirigami.FormData.label: qsTr("Note:") }
         }
@@ -58,7 +53,6 @@ Frame {
                 onClicked: {
                     const obj = { start: startField.text };
                     if (endField.text)   obj.end   = endField.text;
-                    if (colorField.text) obj.color = colorField.text;
                     if (typeField.text)  obj.type  = typeField.text;
                     if (noteField.text)  obj.note  = noteField.text;
                     panel.saved(obj);

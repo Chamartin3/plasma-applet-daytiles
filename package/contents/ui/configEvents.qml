@@ -72,13 +72,8 @@ Item {
                         placeholderText: i18n("end")
                         onTextChanged: if (text !== model.end) { events.setProperty(index, "end", text); persist(); }
                     }
-                    ColorField {
-                        Layout.preferredWidth: 160
-                        text: model.color
-                        onTextChanged: if (text !== model.color) { events.setProperty(index, "color", text); persist(); }
-                    }
                     ComboBox {
-                        Layout.preferredWidth: 110
+                        Layout.preferredWidth: 140
                         editable: true
                         model: typeNames
                         currentIndex: -1
@@ -105,7 +100,6 @@ Item {
 
             DateField { id: addStart; Kirigami.FormData.label: i18n("Start:") }
             DateField { id: addEnd;   Kirigami.FormData.label: i18n("End:");   placeholderText: i18n("optional") }
-            ColorField { id: addColor; Kirigami.FormData.label: i18n("Color:"); placeholderText: i18n("optional") }
             ComboBox {
                 id: addType
                 Kirigami.FormData.label: i18n("Type:")
@@ -124,12 +118,12 @@ Item {
                     events.append({
                         start: addStart.text,
                         end:   addEnd.text   || "",
-                        color: addColor.text || "",
+                        color: "",
                         type:  addType.editText || "",
                         note:  addNote.text  || "",
                     });
                     addStart.text = ""; addEnd.text = "";
-                    addColor.text = ""; addType.currentIndex = -1; addType.editText = ""; addNote.text = "";
+                    addType.currentIndex = -1; addType.editText = ""; addNote.text = "";
                     persist();
                 }
             }
