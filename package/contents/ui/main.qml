@@ -53,8 +53,8 @@ Item {
                 size:  c.alternationSize || 7,
             },
         };
-        if (typeof c.pastFade === "number"   && c.pastFade   !== 1) colors.pastFade   = c.pastFade;
-        if (typeof c.futureFade === "number" && c.futureFade !== 1) colors.futureFade = c.futureFade;
+        colors.pastFade   = (typeof c.pastFade   === "number") ? c.pastFade   : 1;
+        colors.futureFade = (typeof c.futureFade === "number") ? c.futureFade : 1;
         if (c.heatmap === true) {
             colors.heatmap = true;
             if (typeof c.heatmapLow === "number")  colors.heatmapLow  = c.heatmapLow;
