@@ -915,54 +915,12 @@ function _bakeFilterFade(el) {
 
 function _renderInternal(cfg, events) {
     if (!cfg || !cfg.startDate || !cfg.endDate) return { svg: "", tiles: [], width: 0, height: 0 };
-    var palette = cfg.palette || {};
-    var L = DTLib.Layout, S = DTLib.Shape;
-    var layoutMap = { Month: L.Month, Week: L.Week, Weekday: L.Weekday, Custom: L.Custom };
-    var shapeMap  = { Rectangle: S.Rect, Rect: S.Rect, RoundedRect: S.RoundedRect, Circle: S.Circle, Diamond: S.Diamond };
-    var settings = {
-        layout:    layoutMap[cfg.layout] || L.Month,
-        shape:     shapeMap[cfg.shape]   || S.RoundedRect,
-        startDate: cfg.startDate,
-        endDate:   cfg.endDate,
-        daySize:   cfg.daySize || 16,
-        gap:       cfg.gap != null ? cfg.gap : 2,
-        colors: (function() {
-            var c = {
-                dayColor:          palette.base    || cfg.themeFg || "#3a3a3a",
-                current:           palette.current || "#FFD700",
-                defaultEventColor: palette.event   || "#ff5577",
-                highlight: {
-                    weekdays: palette.weekend ? { 0: palette.weekend, 6: palette.weekend } : {},
-                    months:   {},
-                },
-            };
-            var altMode = (cfg.alternationMode || "month").toLowerCase();
-            if (altMode !== "none" && palette.alternation) {
-                c.alternation = {
-                    mode: altMode,
-                    color: palette.alternation,
-                    size: (typeof cfg.alternationSize === "number" && cfg.alternationSize > 0) ? cfg.alternationSize : 7,
-                };
-            }
-            if (typeof cfg.pastFade === "number")        c.pastFade = cfg.pastFade;
-            if (typeof cfg.futureFade === "number")      c.futureFade = cfg.futureFade;
-            if (cfg.highlightCurrent === false)          c.highlightCurrent = false;
-            if (cfg.eventTypeColors && typeof cfg.eventTypeColors === "object")
-                c.eventTypeColors = cfg.eventTypeColors;
-            if (cfg.heatmap) {
-                c.heatmap = true;
-                if (typeof cfg.heatmapLow === "number")  c.heatmapLow  = cfg.heatmapLow;
-                if (typeof cfg.heatmapHigh === "number") c.heatmapHigh = cfg.heatmapHigh;
-            }
-            return c;
-        })(),
-    };
-    if (typeof cfg.daysPerRow === "number" && cfg.daysPerRow > 0) settings.daysPerRow = cfg.daysPerRow;
-    if (typeof cfg.startDayOfWeek === "number") settings.startDayOfWeek = cfg.startDayOfWeek;
-    if (cfg.showLabels) {
-        settings.showLabels = true;
-        if (typeof cfg.labelWidth === "number") settings.labelWidth = cfg.labelWidth;
+    var settings = JSON.parse(JSON.stringify(cfg));
+    if (settings.colors && (!settings.colors.dayColor || settings.colors.dayColor === "#3a3a3a") && cfg.themeFg) {
+        settings.colors.dayColor = cfg.themeFg;
     }
+    delete settings.themeFg;
+    delete settings.themeBg;
     var dt = new DTLib.Daytiles(settings);
     if (Array.isArray(events) && events.length) dt.addEvents(events);
     var root = new ShimElement("svg", "http://www.w3.org/2000/svg");
