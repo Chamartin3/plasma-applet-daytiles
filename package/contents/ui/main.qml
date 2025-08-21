@@ -24,30 +24,57 @@ Item {
         catch (e) { return {}; }
     }
 
+    function _shapeToken(s) {
+        const v = (s || "RoundedRect").toLowerCase();
+        if (v === "rectangle")   return "rect";
+        if (v === "roundedrect") return "roundedRect";
+        return v;
+    }
+
     function buildConfig() {
         const y = new Date().getFullYear();
-        const start = plasmoid.configuration.startDate || (y + "-01-01");
-        const end   = plasmoid.configuration.endDate   || (y + "-12-31");
+        const c = plasmoid.configuration;
+        const palette = parsedPalette();
+        const altMode = (c.alternationMode || "month").toLowerCase();
+
+        const colors = {
+            current:           palette.current || "#FFD700",
+            dayColor:          palette.base    || "#3a3a3a",
+            defaultEventColor: palette.event   || "#ff5577",
+            highlightCurrent:  c.highlightCurrent !== false,
+            eventTypeColors:   parsedTypeColors(),
+            highlight: {
+                weekdays: palette.weekend ? { 0: palette.weekend, 6: palette.weekend } : {},
+                months:   {},
+            },
+            alternation: {
+                mode:  altMode,
+                color: palette.alternation || "#d2f0fa",
+                size:  c.alternationSize || 7,
+            },
+        };
+        if (typeof c.pastFade === "number"   && c.pastFade   !== 1) colors.pastFade   = c.pastFade;
+        if (typeof c.futureFade === "number" && c.futureFade !== 1) colors.futureFade = c.futureFade;
+        if (c.heatmap === true) {
+            colors.heatmap = true;
+            if (typeof c.heatmapLow === "number")  colors.heatmapLow  = c.heatmapLow;
+            if (typeof c.heatmapHigh === "number") colors.heatmapHigh = c.heatmapHigh;
+        }
+
         return {
-            layout:           plasmoid.configuration.layout || "Month",
-            shape:            plasmoid.configuration.shape  || "RoundedRect",
-            startDate:        start,
-            endDate:          end,
-            daySize:          plasmoid.configuration.daySize || 16,
-            gap:              plasmoid.configuration.gap || 2,
-            daysPerRow:       plasmoid.configuration.daysPerRow || 21,
-            startDayOfWeek:   plasmoid.configuration.startDayOfWeek,
-            showLabels:       plasmoid.configuration.showLabels === true,
-            pastFade:         plasmoid.configuration.pastFade,
-            futureFade:       plasmoid.configuration.futureFade,
-            highlightCurrent: plasmoid.configuration.highlightCurrent !== false,
-            heatmap:          plasmoid.configuration.heatmap === true,
-            heatmapLow:       plasmoid.configuration.heatmapLow,
-            heatmapHigh:      plasmoid.configuration.heatmapHigh,
-            alternationMode:  plasmoid.configuration.alternationMode || "month",
-            alternationSize:  plasmoid.configuration.alternationSize || 7,
-            eventTypeColors:  parsedTypeColors(),
-            palette:          parsedPalette(),
+            layout:         (c.layout || "Month").toLowerCase(),
+            shape:          root._shapeToken(c.shape),
+            startDate:      c.startDate || (y + "-01-01"),
+            endDate:        c.endDate   || (y + "-12-31"),
+            year:           null,
+            daySize:        c.daySize || 16,
+            gap:            (c.gap != null) ? c.gap : 2,
+            startDayOfWeek: (c.startDayOfWeek != null) ? c.startDayOfWeek : 1,
+            daysPerRow:     c.daysPerRow || 21,
+            showLabels:     c.showLabels === true,
+            labelWidth:     56,
+            events:         {},
+            colors:         colors,
         };
     }
 
