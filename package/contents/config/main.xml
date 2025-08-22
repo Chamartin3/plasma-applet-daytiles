@@ -27,6 +27,9 @@
         <entry name="showLabels" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="dateFormat" type="String">
+            <default>yyyy-MM-dd</default>
+        </entry>
     </group>
 
     <group name="Appearance">

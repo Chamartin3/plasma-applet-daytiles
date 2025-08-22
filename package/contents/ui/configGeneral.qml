@@ -13,6 +13,7 @@ Kirigami.FormLayout {
     property alias cfg_daysPerRow:     daysPerRowSpin.value
     property alias cfg_startDayOfWeek: startDowCombo.currentIndex
     property alias cfg_showLabels:     showLabelsCheck.checked
+    property alias cfg_dateFormat:     dateFormatField.text
     property alias cfg_shape:          shapeCombo.currentText
     property alias cfg_daySize:        sizeSpin.value
     property alias cfg_gap:            gapSpin.value
@@ -50,6 +51,16 @@ Kirigami.FormLayout {
         id: showLabelsCheck
         Kirigami.FormData.label: i18n("Row labels:")
         text: i18n("Show month/week names")
+    }
+
+    TextField {
+        id: dateFormatField
+        Kirigami.FormData.label: i18n("Tooltip date format:")
+        placeholderText: "yyyy-MM-dd"
+        text: "yyyy-MM-dd"
+        ToolTip.visible: hovered
+        ToolTip.delay: 400
+        ToolTip.text: i18n("Qt format tokens: yyyy yy MM M dd d ddd dddd MMM MMMM")
     }
 
     Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Tiles") }
