@@ -11,8 +11,35 @@ Item {
     property var tiles: []
     property int svgW: 0
     property int svgH: 0
+    property string dateFormat: "yyyy-MM-dd"
 
     signal tileClicked(var info)
+
+    function _parseIso(s) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || "");
+        if (!m) return null;
+        return new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]));
+    }
+
+    function _formatDate(iso) {
+        const d = _parseIso(iso);
+        if (!d) return iso || "";
+        return Qt.formatDate(d, view.dateFormat || "yyyy-MM-dd");
+    }
+
+    function tooltipFor(iso) {
+        if (!iso) return "";
+        const header = _formatDate(iso);
+        const matches = (events || []).filter(function(e) {
+            return e.start === iso || (e.end && e.start <= iso && iso <= e.end);
+        });
+        if (!matches.length) return header;
+        const lines = matches.map(function(e) {
+            const tag = e.type ? "[" + e.type + "] " : "";
+            return tag + (e.note || "(" + (e.start || iso) + ")");
+        });
+        return header + "\n" + lines.join("\n");
+    }
 
     function apply() {
         const cfgWithTheme = Object.assign({}, config, {
@@ -71,9 +98,7 @@ Item {
 
                     ToolTip.visible: containsMouse
                     ToolTip.delay: 200
-                    ToolTip.text: modelData.note
-                        ? modelData.date + "\n" + modelData.note
-                        : (modelData.date || "?")
+                    ToolTip.text: view.tooltipFor(modelData.date)
                 }
             }
         }

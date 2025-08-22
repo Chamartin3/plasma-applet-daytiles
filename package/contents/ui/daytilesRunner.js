@@ -866,8 +866,7 @@ function _collectTiles(el, out) {
             bx = minX; by = minY; bw = maxX - minX; bh = maxY - minY;
         }
         out.push({
-            date: _isoDate(dateAttr),
-            rawDate: dateAttr,
+            date: _isoDate(dateAttr) || dateAttr,
             note: (el.attrs["data-note"] || ""),
             x: bx, y: by, w: bw, h: bh,
         });

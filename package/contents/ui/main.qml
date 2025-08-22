@@ -118,6 +118,7 @@ Item {
             id: view
             Layout.fillWidth: true
             Layout.fillHeight: true
+            dateFormat: plasmoid.configuration.dateFormat || "yyyy-MM-dd"
 
             config: {
                 plasmoid.configuration.layout;
