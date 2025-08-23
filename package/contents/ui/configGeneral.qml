@@ -98,4 +98,53 @@ Kirigami.FormLayout {
         Kirigami.FormData.label: i18n("End date:")
         placeholderText: "2025-12-31"
     }
+
+    RowLayout {
+        Kirigami.FormData.label: i18n("Presets:")
+        spacing: 4
+        Button {
+            text: i18n("This month")
+            onClicked: form.applyPreset("month")
+        }
+        Button {
+            text: i18n("This quarter")
+            onClicked: form.applyPreset("quarter")
+        }
+        Button {
+            text: i18n("This year")
+            onClicked: form.applyPreset("year")
+        }
+        Button {
+            text: i18n("Last 12 months")
+            onClicked: form.applyPreset("rolling12")
+        }
+    }
+
+    function _pad(n) { return n < 10 ? "0" + n : "" + n; }
+    function _iso(d) { return d.getFullYear() + "-" + _pad(d.getMonth() + 1) + "-" + _pad(d.getDate()); }
+
+    function applyPreset(kind) {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = now.getMonth();
+        let s, e;
+        if (kind === "month") {
+            s = new Date(y, m, 1);
+            e = new Date(y, m + 1, 0);
+        } else if (kind === "quarter") {
+            const qStart = Math.floor(m / 3) * 3;
+            s = new Date(y, qStart, 1);
+            e = new Date(y, qStart + 3, 0);
+        } else if (kind === "year") {
+            s = new Date(y, 0, 1);
+            e = new Date(y, 11, 31);
+        } else if (kind === "rolling12") {
+            e = new Date(y, m + 1, 0);
+            s = new Date(y - 1, m + 1, 1);
+        }
+        if (s && e) {
+            startField.text = _iso(s);
+            endField.text   = _iso(e);
+        }
+    }
 }
