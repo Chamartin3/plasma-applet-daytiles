@@ -98,7 +98,11 @@ Item {
 
                     ToolTip.visible: containsMouse
                     ToolTip.delay: 200
-                    ToolTip.text: view.tooltipFor(modelData.date)
+                    ToolTip.text: {
+                        view.dateFormat;
+                        view.events;
+                        return view.tooltipFor(modelData.date);
+                    }
                 }
             }
         }

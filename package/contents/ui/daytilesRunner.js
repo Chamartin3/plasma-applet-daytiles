@@ -840,7 +840,19 @@ var DTLib = (() => {
 })();
 
 function _isoDate(s) {
-    return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "";
+    if (!s) return "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    var m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s);
+    if (m) {
+        var p = function(n) { return n.length < 2 ? "0" + n : n; };
+        return m[1] + "-" + p(m[2]) + "-" + p(m[3]);
+    }
+    var d = new Date(s);
+    if (!isNaN(d.getTime())) {
+        var y = d.getFullYear(), mo = d.getMonth() + 1, da = d.getDate();
+        return y + "-" + (mo < 10 ? "0" + mo : mo) + "-" + (da < 10 ? "0" + da : da);
+    }
+    return "";
 }
 
 function _collectTiles(el, out) {
