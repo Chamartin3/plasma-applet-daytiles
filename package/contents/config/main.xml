@@ -10,7 +10,7 @@
             <default></default>
         </entry>
         <entry name="layout" type="String">
-            <default>Month</default>
+            <default>Weekday</default>
         </entry>
         <entry name="startDate" type="String">
             <default></default>
@@ -46,7 +46,7 @@
             <default>{}</default>
         </entry>
         <entry name="pastFade" type="Double">
-            <default>1.0</default>
+            <default>0.6</default>
         </entry>
         <entry name="futureFade" type="Double">
             <default>1.0</default>
