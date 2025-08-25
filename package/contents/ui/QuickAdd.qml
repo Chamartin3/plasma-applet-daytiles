@@ -36,6 +36,7 @@ Frame {
                 id: endField
                 Kirigami.FormData.label: qsTr("End:")
                 placeholderText: qsTr("optional")
+                invalid: !!(startField.text && text && text < startField.text)
             }
             TextField { id: typeField; Kirigami.FormData.label: qsTr("Type:"); placeholderText: qsTr("optional") }
             TextField { id: noteField;  Kirigami.FormData.label: qsTr("Note:") }
@@ -49,7 +50,7 @@ Frame {
             }
             Button {
                 text: qsTr("Save")
-                enabled: startField.text.length > 0
+                enabled: startField.text.length > 0 && !endField.invalid
                 onClicked: {
                     const obj = { start: startField.text };
                     if (endField.text)   obj.end   = endField.text;

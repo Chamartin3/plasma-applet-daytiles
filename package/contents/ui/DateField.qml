@@ -7,6 +7,7 @@ RowLayout {
 
     property alias text: field.text
     property alias placeholderText: field.placeholderText
+    property bool invalid: false
 
     spacing: 4
 
@@ -26,6 +27,10 @@ RowLayout {
         Layout.fillWidth: true
         placeholderText: "YYYY-MM-DD"
         validator: RegExpValidator { regExp: /^(\d{4}-\d{2}-\d{2})?$/ }
+        color: root.invalid ? "#d04040" : palette.text
+        ToolTip.visible: root.invalid && hovered
+        ToolTip.delay: 200
+        ToolTip.text: qsTr("End date must be on or after start date")
     }
 
     Button {

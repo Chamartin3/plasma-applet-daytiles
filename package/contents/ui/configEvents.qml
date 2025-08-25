@@ -11,6 +11,10 @@ Item {
     property alias cfg_eventsJson:           store.text
     property alias cfg_eventTypeColorsJson:  typesStore.text
 
+    function rangeInvalid(start, end) {
+        return !!(start && end && end < start);
+    }
+
     function parseEvents() {
         try { return JSON.parse(store.text || "[]"); } catch (e) { return []; }
     }
@@ -70,6 +74,7 @@ Item {
                         Layout.preferredWidth: 150
                         text: model.end
                         placeholderText: i18n("end")
+                        invalid: form.rangeInvalid(model.start, text)
                         onTextChanged: if (text !== model.end) { events.setProperty(index, "end", text); persist(); }
                     }
                     ComboBox {
@@ -99,7 +104,12 @@ Item {
             Layout.fillWidth: true
 
             DateField { id: addStart; Kirigami.FormData.label: i18n("Start:") }
-            DateField { id: addEnd;   Kirigami.FormData.label: i18n("End:");   placeholderText: i18n("optional") }
+            DateField {
+                id: addEnd
+                Kirigami.FormData.label: i18n("End:")
+                placeholderText: i18n("optional")
+                invalid: form.rangeInvalid(addStart.text, text)
+            }
             ComboBox {
                 id: addType
                 Kirigami.FormData.label: i18n("Type:")
@@ -113,7 +123,7 @@ Item {
 
             Button {
                 text: i18n("Add event")
-                enabled: addStart.text.length > 0
+                enabled: addStart.text.length > 0 && !form.rangeInvalid(addStart.text, addEnd.text)
                 onClicked: {
                     events.append({
                         start: addStart.text,
