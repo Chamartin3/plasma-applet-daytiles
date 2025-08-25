@@ -840,19 +840,34 @@ var DTLib = (() => {
 })();
 
 function _isoDate(s) {
-    if (!s) return "";
-    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-    var m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s);
-    if (m) {
-        var p = function(n) { return n.length < 2 ? "0" + n : n; };
-        return m[1] + "-" + p(m[2]) + "-" + p(m[3]);
+    return /^\d{4}-\d{2}-\d{2}$/.test(s || "") ? s : "";
+}
+
+function _pad2(n) { return n < 10 ? "0" + n : "" + n; }
+function _isoFromDate(d) {
+    return d.getFullYear() + "-" + _pad2(d.getMonth() + 1) + "-" + _pad2(d.getDate());
+}
+function _datesInRange(startStr, endStr) {
+    var m1 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(startStr || "");
+    var m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(endStr || "");
+    if (!m1 || !m2) return [];
+    var s = new Date(parseInt(m1[1]), parseInt(m1[2]) - 1, parseInt(m1[3]));
+    var e = new Date(parseInt(m2[1]), parseInt(m2[2]) - 1, parseInt(m2[3]));
+    var out = [];
+    var cur = new Date(s);
+    while (cur.getTime() <= e.getTime()) {
+        out.push(_isoFromDate(cur));
+        cur.setDate(cur.getDate() + 1);
     }
-    var d = new Date(s);
-    if (!isNaN(d.getTime())) {
-        var y = d.getFullYear(), mo = d.getMonth() + 1, da = d.getDate();
-        return y + "-" + (mo < 10 ? "0" + mo : mo) + "-" + (da < 10 ? "0" + da : da);
+    return out;
+}
+function _rewriteDates(el, dates, idxRef) {
+    if (!el) return;
+    if (el.attrs && el.attrs["data-date"] != null) {
+        if (idxRef.i < dates.length) el.attrs["data-date"] = dates[idxRef.i];
+        idxRef.i++;
     }
-    return "";
+    if (el.children) for (var i = 0; i < el.children.length; ++i) _rewriteDates(el.children[i], dates, idxRef);
 }
 
 function _collectTiles(el, out) {
@@ -937,6 +952,7 @@ function _renderInternal(cfg, events) {
     var root = new ShimElement("svg", "http://www.w3.org/2000/svg");
     root.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     dt.render(root);
+    _rewriteDates(root, _datesInRange(cfg.startDate, cfg.endDate), { i: 0 });
     _bakeFilterFade(root);
     var tiles = [];
     _collectTiles(root, tiles);
