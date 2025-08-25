@@ -72,6 +72,9 @@
         <entry name="eventTypeColorsJson" type="String">
             <default>{}</default>
         </entry>
+        <entry name="highlightsJson" type="String">
+            <default>[]</default>
+        </entry>
     </group>
 
     <group name="Events">

@@ -7,6 +7,7 @@ Kirigami.FormLayout {
     id: form
 
     property alias cfg_paletteJson:      paletteStore.text
+    property alias cfg_highlightsJson:   highlightsStore.text
     property alias cfg_highlightCurrent: highlightTodayCheck.checked
     property alias cfg_heatmap:          heatmapCheck.checked
     property alias cfg_pastFade:         pastFadeSlider.value
@@ -16,7 +17,8 @@ Kirigami.FormLayout {
     property alias cfg_alternationMode:  altModeCombo.currentValue
     property alias cfg_alternationSize:  altSizeSpin.value
 
-    TextField { id: paletteStore; visible: false }
+    TextField { id: paletteStore;    visible: false }
+    TextField { id: highlightsStore; visible: false }
 
     Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Colors") }
 
@@ -101,11 +103,94 @@ Kirigami.FormLayout {
         onTextChanged: form.writePalette()
     }
 
-    ColorField {
-        id: weekendField
-        Kirigami.FormData.label: i18n("Weekend color:")
-        placeholderText: i18n("optional")
-        onTextChanged: form.writePalette()
+    ListModel { id: highlights }
+
+    Frame {
+        Kirigami.FormData.label: i18n("Highlight rules:")
+        Layout.preferredWidth: 360
+        Layout.preferredHeight: Math.min(220, Math.max(40, highlights.count * 40 + 16))
+
+        ListView {
+            id: highlightsList
+            anchors.fill: parent
+            clip: true
+            spacing: 4
+            model: highlights
+            delegate: RowLayout {
+                width: highlightsList.width
+                spacing: 6
+                ComboBox {
+                    Layout.preferredWidth: 110
+                    textRole: "label"
+                    valueRole: "value"
+                    model: [
+                        { label: i18n("Weekday"), value: "weekday" },
+                        { label: i18n("Month"),   value: "month"   },
+                    ]
+                    Component.onCompleted: {
+                        for (let i = 0; i < model.length; ++i)
+                            if (model[i].value === highlights.get(index).kind) { currentIndex = i; break; }
+                    }
+                    onActivated: {
+                        highlights.setProperty(index, "kind", currentValue);
+                        highlights.setProperty(index, "value", currentValue === "weekday" ? 0 : 1);
+                        form.writeHighlights();
+                    }
+                }
+                ComboBox {
+                    Layout.fillWidth: true
+                    textRole: "label"
+                    valueRole: "value"
+                    model: highlights.get(index).kind === "weekday" ? [
+                        { label: i18n("Sunday"),    value: 0 },
+                        { label: i18n("Monday"),    value: 1 },
+                        { label: i18n("Tuesday"),   value: 2 },
+                        { label: i18n("Wednesday"), value: 3 },
+                        { label: i18n("Thursday"),  value: 4 },
+                        { label: i18n("Friday"),    value: 5 },
+                        { label: i18n("Saturday"),  value: 6 },
+                    ] : [
+                        { label: i18n("January"),   value: 1  },
+                        { label: i18n("February"),  value: 2  },
+                        { label: i18n("March"),     value: 3  },
+                        { label: i18n("April"),     value: 4  },
+                        { label: i18n("May"),       value: 5  },
+                        { label: i18n("June"),      value: 6  },
+                        { label: i18n("July"),      value: 7  },
+                        { label: i18n("August"),    value: 8  },
+                        { label: i18n("September"), value: 9  },
+                        { label: i18n("October"),   value: 10 },
+                        { label: i18n("November"),  value: 11 },
+                        { label: i18n("December"),  value: 12 },
+                    ]
+                    Component.onCompleted: {
+                        const v = highlights.get(index).value;
+                        for (let i = 0; i < model.length; ++i)
+                            if (model[i].value === v) { currentIndex = i; break; }
+                    }
+                    onActivated: {
+                        highlights.setProperty(index, "value", currentValue);
+                        form.writeHighlights();
+                    }
+                }
+                ColorField {
+                    Layout.preferredWidth: 130
+                    text: model.color
+                    onTextChanged: if (text !== model.color) { highlights.setProperty(index, "color", text); form.writeHighlights(); }
+                }
+                Button {
+                    flat: true
+                    icon.name: "edit-delete"
+                    onClicked: { highlights.remove(index); form.writeHighlights(); }
+                }
+            }
+        }
+    }
+
+    Button {
+        text: i18n("Add highlight")
+        icon.name: "list-add"
+        onClicked: { highlights.append({ kind: "weekday", value: 0, color: "" }); form.writeHighlights(); }
     }
 
     Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Heatmap") }
@@ -145,9 +230,18 @@ Kirigami.FormLayout {
         if (baseField.text)        obj.base        = baseField.text;
         if (currentField.text)     obj.current     = currentField.text;
         if (eventField.text)       obj.event       = eventField.text;
-        if (weekendField.text)     obj.weekend     = weekendField.text;
         if (alternationField.text) obj.alternation = alternationField.text;
         paletteStore.text = JSON.stringify(obj);
+    }
+
+    function writeHighlights() {
+        const arr = [];
+        for (let i = 0; i < highlights.count; ++i) {
+            const h = highlights.get(i);
+            if (!h.color) continue;
+            arr.push({ kind: h.kind, value: h.value, color: h.color });
+        }
+        highlightsStore.text = JSON.stringify(arr);
     }
 
     Component.onCompleted: {
@@ -156,8 +250,14 @@ Kirigami.FormLayout {
             baseField.text        = p.base        || "";
             currentField.text     = p.current     || "";
             eventField.text       = p.event       || "";
-            weekendField.text     = p.weekend     || "";
             alternationField.text = p.alternation || "";
+        } catch (e) {}
+        try {
+            const hl = JSON.parse(highlightsStore.text || "[]");
+            if (Array.isArray(hl)) for (const h of hl) {
+                if (!h || !h.kind) continue;
+                highlights.append({ kind: h.kind, value: h.value || 0, color: h.color || "" });
+            }
         } catch (e) {}
         for (let i = 0; i < altModeCombo.model.length; ++i) {
             if (altModeCombo.model[i].value === altModeCombo.currentValue) { altModeCombo.currentIndex = i; break; }

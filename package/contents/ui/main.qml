@@ -24,6 +24,24 @@ Item {
         catch (e) { return {}; }
     }
 
+    function parsedHighlights() {
+        try {
+            const arr = JSON.parse(plasmoid.configuration.highlightsJson || "[]");
+            return Array.isArray(arr) ? arr : [];
+        } catch (e) { return []; }
+    }
+
+    function buildHighlight() {
+        const out = { weekdays: {}, months: {} };
+        const rules = parsedHighlights();
+        for (const r of rules) {
+            if (!r || !r.color) continue;
+            if (r.kind === "weekday") out.weekdays[r.value] = r.color;
+            else if (r.kind === "month") out.months[r.value] = r.color;
+        }
+        return out;
+    }
+
     function _shapeToken(s) {
         const v = (s || "RoundedRect").toLowerCase();
         if (v === "rectangle")   return "rect";
@@ -43,10 +61,7 @@ Item {
             defaultEventColor: palette.event   || "#ff5577",
             highlightCurrent:  c.highlightCurrent !== false,
             eventTypeColors:   parsedTypeColors(),
-            highlight: {
-                weekdays: palette.weekend ? { 0: palette.weekend, 6: palette.weekend } : {},
-                months:   {},
-            },
+            highlight: root.buildHighlight(),
             alternation: {
                 mode:  altMode,
                 color: palette.alternation || "#d2f0fa",
@@ -139,6 +154,7 @@ Item {
                 plasmoid.configuration.alternationMode;
                 plasmoid.configuration.alternationSize;
                 plasmoid.configuration.paletteJson;
+                plasmoid.configuration.highlightsJson;
                 plasmoid.configuration.eventTypeColorsJson;
                 return root.buildConfig();
             }
