@@ -49,9 +49,18 @@ Item {
         return v;
     }
 
+    function _pad2(n) { return n < 10 ? "0" + n : "" + n; }
+    function _iso(d) { return d.getFullYear() + "-" + root._pad2(d.getMonth() + 1) + "-" + root._pad2(d.getDate()); }
+    function defaultRange() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+        const end = new Date(now.getFullYear(), now.getMonth() + 3 + 1, 0);
+        return { start: root._iso(start), end: root._iso(end) };
+    }
+
     function buildConfig() {
-        const y = new Date().getFullYear();
         const c = plasmoid.configuration;
+        const dflt = root.defaultRange();
         const palette = parsedPalette();
         const altMode = (c.alternationMode || "month").toLowerCase();
 
@@ -79,8 +88,8 @@ Item {
         return {
             layout:         (c.layout || "Month").toLowerCase(),
             shape:          root._shapeToken(c.shape),
-            startDate:      c.startDate || (y + "-01-01"),
-            endDate:        c.endDate   || (y + "-12-31"),
+            startDate:      c.startDate || dflt.start,
+            endDate:        c.endDate   || dflt.end,
             year:           null,
             daySize:        c.daySize || 16,
             gap:            (c.gap != null) ? c.gap : 2,
