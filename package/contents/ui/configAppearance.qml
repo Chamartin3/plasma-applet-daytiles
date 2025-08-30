@@ -105,92 +105,97 @@ Kirigami.FormLayout {
 
     ListModel { id: highlights }
 
-    Frame {
-        Kirigami.FormData.label: i18n("Highlight rules:")
-        Layout.preferredWidth: 360
-        Layout.preferredHeight: Math.min(220, Math.max(40, highlights.count * 40 + 16))
+    readonly property var kindOptions: [
+        { label: i18n("Weekday"), value: "weekday" },
+        { label: i18n("Month"),   value: "month"   },
+    ]
+    readonly property var weekdayOptions: [
+        { label: i18n("Sunday"),    value: 0 },
+        { label: i18n("Monday"),    value: 1 },
+        { label: i18n("Tuesday"),   value: 2 },
+        { label: i18n("Wednesday"), value: 3 },
+        { label: i18n("Thursday"),  value: 4 },
+        { label: i18n("Friday"),    value: 5 },
+        { label: i18n("Saturday"),  value: 6 },
+    ]
+    readonly property var monthOptions: [
+        { label: i18n("January"),   value: 1  },
+        { label: i18n("February"),  value: 2  },
+        { label: i18n("March"),     value: 3  },
+        { label: i18n("April"),     value: 4  },
+        { label: i18n("May"),       value: 5  },
+        { label: i18n("June"),      value: 6  },
+        { label: i18n("July"),      value: 7  },
+        { label: i18n("August"),    value: 8  },
+        { label: i18n("September"), value: 9  },
+        { label: i18n("October"),   value: 10 },
+        { label: i18n("November"),  value: 11 },
+        { label: i18n("December"),  value: 12 },
+    ]
 
-        ListView {
-            id: highlightsList
-            anchors.fill: parent
-            clip: true
-            spacing: 4
+    function _labelFor(opts, val) {
+        for (let i = 0; i < opts.length; ++i) if (opts[i].value === val) return opts[i].label;
+        return "";
+    }
+
+    ColumnLayout {
+        Kirigami.FormData.label: i18n("Highlight rules:")
+        Layout.preferredWidth: 380
+        spacing: 4
+
+        Repeater {
             model: highlights
             delegate: RowLayout {
-                width: highlightsList.width
+                id: row
+                property int rowIndex: index
+                property string rowKind: kind
+                property int rowValue: value
+                property string rowColor: color
+                Layout.fillWidth: true
                 spacing: 6
+
                 ComboBox {
                     Layout.preferredWidth: 110
-                    textRole: "label"
-                    valueRole: "value"
-                    model: [
-                        { label: i18n("Weekday"), value: "weekday" },
-                        { label: i18n("Month"),   value: "month"   },
-                    ]
-                    Component.onCompleted: {
-                        for (let i = 0; i < model.length; ++i)
-                            if (model[i].value === highlights.get(index).kind) { currentIndex = i; break; }
-                    }
+                    model: form.kindOptions.map(function(o) { return o.label; })
+                    currentIndex: row.rowKind === "month" ? 1 : 0
                     onActivated: {
-                        highlights.setProperty(index, "kind", currentValue);
-                        highlights.setProperty(index, "value", currentValue === "weekday" ? 0 : 1);
+                        const k = form.kindOptions[currentIndex].value;
+                        highlights.setProperty(row.rowIndex, "kind", k);
+                        highlights.setProperty(row.rowIndex, "value", k === "weekday" ? 0 : 1);
                         form.writeHighlights();
                     }
                 }
                 ComboBox {
                     Layout.fillWidth: true
-                    textRole: "label"
-                    valueRole: "value"
-                    model: highlights.get(index).kind === "weekday" ? [
-                        { label: i18n("Sunday"),    value: 0 },
-                        { label: i18n("Monday"),    value: 1 },
-                        { label: i18n("Tuesday"),   value: 2 },
-                        { label: i18n("Wednesday"), value: 3 },
-                        { label: i18n("Thursday"),  value: 4 },
-                        { label: i18n("Friday"),    value: 5 },
-                        { label: i18n("Saturday"),  value: 6 },
-                    ] : [
-                        { label: i18n("January"),   value: 1  },
-                        { label: i18n("February"),  value: 2  },
-                        { label: i18n("March"),     value: 3  },
-                        { label: i18n("April"),     value: 4  },
-                        { label: i18n("May"),       value: 5  },
-                        { label: i18n("June"),      value: 6  },
-                        { label: i18n("July"),      value: 7  },
-                        { label: i18n("August"),    value: 8  },
-                        { label: i18n("September"), value: 9  },
-                        { label: i18n("October"),   value: 10 },
-                        { label: i18n("November"),  value: 11 },
-                        { label: i18n("December"),  value: 12 },
-                    ]
-                    Component.onCompleted: {
-                        const v = highlights.get(index).value;
-                        for (let i = 0; i < model.length; ++i)
-                            if (model[i].value === v) { currentIndex = i; break; }
+                    property var opts: row.rowKind === "month" ? form.monthOptions : form.weekdayOptions
+                    model: opts.map(function(o) { return o.label; })
+                    currentIndex: {
+                        for (let i = 0; i < opts.length; ++i) if (opts[i].value === row.rowValue) return i;
+                        return 0;
                     }
                     onActivated: {
-                        highlights.setProperty(index, "value", currentValue);
+                        highlights.setProperty(row.rowIndex, "value", opts[currentIndex].value);
                         form.writeHighlights();
                     }
                 }
                 ColorField {
-                    Layout.preferredWidth: 130
-                    text: model.color
-                    onTextChanged: if (text !== model.color) { highlights.setProperty(index, "color", text); form.writeHighlights(); }
+                    Layout.preferredWidth: 110
+                    text: row.rowColor
+                    onTextChanged: if (text !== row.rowColor) { highlights.setProperty(row.rowIndex, "color", text); form.writeHighlights(); }
                 }
                 Button {
                     flat: true
                     icon.name: "edit-delete"
-                    onClicked: { highlights.remove(index); form.writeHighlights(); }
+                    onClicked: { highlights.remove(row.rowIndex); form.writeHighlights(); }
                 }
             }
         }
-    }
 
-    Button {
-        text: i18n("Add highlight")
-        icon.name: "list-add"
-        onClicked: { highlights.append({ kind: "weekday", value: 0, color: "" }); form.writeHighlights(); }
+        Button {
+            text: i18n("Add highlight")
+            icon.name: "list-add"
+            onClicked: { highlights.append({ kind: "weekday", value: 0, color: "#e0e8f0" }); form.writeHighlights(); }
+        }
     }
 
     Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Heatmap") }
