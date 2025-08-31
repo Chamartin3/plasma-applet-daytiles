@@ -73,7 +73,7 @@
             <default>{}</default>
         </entry>
         <entry name="highlightsJson" type="String">
-            <default>[{"kind":"weekday","value":0,"color":"#e0e8f0"},{"kind":"weekday","value":6,"color":"#e0e8f0"}]</default>
+            <default>[{"kind":"weekday","value":0,"color":"#a5f0b6"},{"kind":"weekday","value":6,"color":"#a5f0b6"}]</default>
         </entry>
     </group>
 

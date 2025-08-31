@@ -194,7 +194,7 @@ Kirigami.FormLayout {
         Button {
             text: i18n("Add highlight")
             icon.name: "list-add"
-            onClicked: { highlights.append({ kind: "weekday", value: 0, color: "#e0e8f0" }); form.writeHighlights(); }
+            onClicked: { highlights.append({ kind: "weekday", value: 0, color: "#a5f0b6" }); form.writeHighlights(); }
         }
     }
 
