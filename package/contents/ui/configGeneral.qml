@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
+import "defaults.js" as Defaults
 
 Kirigami.FormLayout {
     id: form
@@ -36,7 +37,7 @@ Kirigami.FormLayout {
         id: daysPerRowSpin
         Kirigami.FormData.label: i18n("Days per row (Custom):")
         from: 1; to: 60; stepSize: 1
-        value: 21
+        value: Defaults.Layout.daysPerRow
     }
 
     ComboBox {
@@ -56,8 +57,8 @@ Kirigami.FormLayout {
     TextField {
         id: dateFormatField
         Kirigami.FormData.label: i18n("Tooltip date format:")
-        placeholderText: "yyyy-MM-dd"
-        text: "yyyy-MM-dd"
+        placeholderText: Defaults.Layout.dateFormat
+        text: Defaults.Layout.dateFormat
         ToolTip.visible: hovered
         ToolTip.delay: 400
         ToolTip.text: i18n("Qt format tokens: yyyy yy MM M dd d ddd dddd MMM MMMM")
@@ -75,14 +76,14 @@ Kirigami.FormLayout {
         id: sizeSpin
         Kirigami.FormData.label: i18n("Day size (px):")
         from: 4; to: 64; stepSize: 1
-        value: 16
+        value: Defaults.Layout.daySize
     }
 
     SpinBox {
         id: gapSpin
         Kirigami.FormData.label: i18n("Gap (px):")
         from: 0; to: 20; stepSize: 1
-        value: 2
+        value: Defaults.Layout.gap
     }
 
     Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Range") }

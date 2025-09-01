@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
+import "defaults.js" as Defaults
 
 Kirigami.FormLayout {
     id: form
@@ -25,19 +26,19 @@ Kirigami.FormLayout {
     ColorField {
         id: baseField
         Kirigami.FormData.label: i18n("Day:")
-        placeholderText: "#3a3a3a"
+        placeholderText: Defaults.Colors.day
         onTextChanged: form.writePalette()
     }
     ColorField {
         id: currentField
         Kirigami.FormData.label: i18n("Today:")
-        placeholderText: "#FFD700"
+        placeholderText: Defaults.Colors.current
         onTextChanged: form.writePalette()
     }
     ColorField {
         id: eventField
         Kirigami.FormData.label: i18n("Default event:")
-        placeholderText: "#ff5577"
+        placeholderText: Defaults.Colors.event
         onTextChanged: form.writePalette()
     }
 
@@ -194,7 +195,7 @@ Kirigami.FormLayout {
         Button {
             text: i18n("Add highlight")
             icon.name: "list-add"
-            onClicked: { highlights.append({ kind: "weekday", value: 0, color: "#a5f0b6" }); form.writeHighlights(); }
+            onClicked: { highlights.append({ kind: "weekday", value: 0, color: Defaults.Colors.weekend }); form.writeHighlights(); }
         }
     }
 

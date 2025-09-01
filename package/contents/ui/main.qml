@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
+import "defaults.js" as Defaults
 
 Item {
     id: root
@@ -42,43 +43,27 @@ Item {
         return out;
     }
 
-    function _shapeToken(s) {
-        const v = (s || "RoundedRect").toLowerCase();
-        if (v === "rectangle")   return "rect";
-        if (v === "roundedrect") return "roundedRect";
-        return v;
-    }
-
-    function _pad2(n) { return n < 10 ? "0" + n : "" + n; }
-    function _iso(d) { return d.getFullYear() + "-" + root._pad2(d.getMonth() + 1) + "-" + root._pad2(d.getDate()); }
-    function defaultRange() {
-        const now = new Date();
-        const start = new Date(now.getFullYear(), now.getMonth() - 3, 1);
-        const end = new Date(now.getFullYear(), now.getMonth() + 3 + 1, 0);
-        return { start: root._iso(start), end: root._iso(end) };
-    }
-
     function buildConfig() {
         const c = plasmoid.configuration;
-        const dflt = root.defaultRange();
+        const dflt = Defaults.defaultRange();
         const palette = parsedPalette();
-        const altMode = (c.alternationMode || "month").toLowerCase();
+        const altMode = (c.alternationMode || Defaults.Alternation.mode).toLowerCase();
 
         const colors = {
-            current:           palette.current || "#FFD700",
-            dayColor:          palette.base    || "#3a3a3a",
-            defaultEventColor: palette.event   || "#ff5577",
+            current:           palette.current || Defaults.Colors.current,
+            dayColor:          palette.base    || Defaults.Colors.day,
+            defaultEventColor: palette.event   || Defaults.Colors.event,
             highlightCurrent:  c.highlightCurrent !== false,
             eventTypeColors:   parsedTypeColors(),
             highlight: root.buildHighlight(),
             alternation: {
                 mode:  altMode,
-                color: palette.alternation || "#d2f0fa",
-                size:  c.alternationSize || 7,
+                color: palette.alternation || Defaults.Colors.alternation,
+                size:  c.alternationSize || Defaults.Alternation.size,
             },
         };
-        colors.pastFade   = (typeof c.pastFade   === "number") ? c.pastFade   : 1;
-        colors.futureFade = (typeof c.futureFade === "number") ? c.futureFade : 1;
+        colors.pastFade   = (typeof c.pastFade   === "number") ? c.pastFade   : Defaults.Fade.past;
+        colors.futureFade = (typeof c.futureFade === "number") ? c.futureFade : Defaults.Fade.future;
         if (c.heatmap === true) {
             colors.heatmap = true;
             if (typeof c.heatmapLow === "number")  colors.heatmapLow  = c.heatmapLow;
@@ -86,17 +71,17 @@ Item {
         }
 
         return {
-            layout:         (c.layout || "Month").toLowerCase(),
-            shape:          root._shapeToken(c.shape),
+            layout:         (c.layout || Defaults.Layout.mode).toLowerCase(),
+            shape:          Defaults.shapeToken(c.shape),
             startDate:      c.startDate || dflt.start,
             endDate:        c.endDate   || dflt.end,
             year:           null,
-            daySize:        c.daySize || 16,
-            gap:            (c.gap != null) ? c.gap : 2,
-            startDayOfWeek: (c.startDayOfWeek != null) ? c.startDayOfWeek : 1,
-            daysPerRow:     c.daysPerRow || 21,
+            daySize:        c.daySize || Defaults.Layout.daySize,
+            gap:            (c.gap != null) ? c.gap : Defaults.Layout.gap,
+            startDayOfWeek: (c.startDayOfWeek != null) ? c.startDayOfWeek : Defaults.Layout.startDayOfWeek,
+            daysPerRow:     c.daysPerRow || Defaults.Layout.daysPerRow,
             showLabels:     c.showLabels === true,
-            labelWidth:     56,
+            labelWidth:     Defaults.Layout.labelWidth,
             events:         {},
             colors:         colors,
         };
@@ -142,7 +127,7 @@ Item {
             id: view
             Layout.fillWidth: true
             Layout.fillHeight: true
-            dateFormat: plasmoid.configuration.dateFormat || "yyyy-MM-dd"
+            dateFormat: plasmoid.configuration.dateFormat || Defaults.Layout.dateFormat
 
             config: {
                 plasmoid.configuration.layout;
