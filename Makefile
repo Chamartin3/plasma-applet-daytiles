@@ -8,7 +8,8 @@ sync:
 	cp vendor/daytiles/index.js $(PKG)/contents/web/daytiles.js
 
 install:
-	kpackagetool5 -t Plasma/Applet --install $(PKG)
+	kpackagetool5 -t Plasma/Applet --install $(PKG) 2>/dev/null || \
+	    kpackagetool5 -t Plasma/Applet --upgrade $(PKG)
 
 upgrade:
 	kpackagetool5 -t Plasma/Applet --upgrade $(PKG) 2>/dev/null || \
