@@ -9,16 +9,20 @@ Kirigami.FormLayout {
     id: form
 
     property alias cfg_title:          titleField.text
-    property alias cfg_layout:         layoutCombo.currentText
+    property alias cfg_layout:         layoutHolder.text
     property alias cfg_startDate:      startField.text
     property alias cfg_endDate:        endField.text
     property alias cfg_daysPerRow:     daysPerRowSpin.value
-    property alias cfg_startDayOfWeek: startDowCombo.currentIndex
+    property alias cfg_startDayOfWeek: dowHolder.value
     property alias cfg_showLabels:     showLabelsCheck.checked
     property alias cfg_dateFormat:     dateFormatField.text
-    property alias cfg_shape:          shapeCombo.currentText
+    property alias cfg_shape:          shapeHolder.text
     property alias cfg_daySize:        sizeSpin.value
     property alias cfg_gap:            gapSpin.value
+
+    TextField { id: layoutHolder; visible: false }
+    TextField { id: shapeHolder;  visible: false }
+    Item      { id: dowHolder;    visible: false; property int value: 1 }
 
     TextField {
         id: titleField
@@ -32,13 +36,18 @@ Kirigami.FormLayout {
         id: layoutCombo
         Kirigami.FormData.label: i18n("Mode:")
         model: ["Month", "Week", "Weekday", "Custom"]
+        onActivated: layoutHolder.text = currentText
+        Component.onCompleted: {
+            const i = model.indexOf(layoutHolder.text);
+            currentIndex = i >= 0 ? i : 0;
+            if (!layoutHolder.text) layoutHolder.text = currentText;
+        }
     }
 
     SpinBox {
         id: daysPerRowSpin
         Kirigami.FormData.label: i18n("Days per row (Custom):")
         from: 1; to: 60; stepSize: 1
-        value: Defaults.Layout.daysPerRow
     }
 
     ComboBox {
@@ -46,7 +55,8 @@ Kirigami.FormLayout {
         Kirigami.FormData.label: i18n("Week starts on:")
         model: [i18n("Sunday"), i18n("Monday"), i18n("Tuesday"), i18n("Wednesday"),
                 i18n("Thursday"), i18n("Friday"), i18n("Saturday")]
-        currentIndex: 1
+        onActivated: dowHolder.value = currentIndex
+        Component.onCompleted: currentIndex = dowHolder.value
     }
 
     CheckBox {
@@ -59,7 +69,6 @@ Kirigami.FormLayout {
         id: dateFormatField
         Kirigami.FormData.label: i18n("Tooltip date format:")
         placeholderText: Defaults.Layout.dateFormat
-        text: Defaults.Layout.dateFormat
         ToolTip.visible: hovered
         ToolTip.delay: 400
         ToolTip.text: i18n("Qt format tokens: yyyy yy MM M dd d ddd dddd MMM MMMM")
@@ -71,20 +80,24 @@ Kirigami.FormLayout {
         id: shapeCombo
         Kirigami.FormData.label: i18n("Shape:")
         model: ["Rectangle", "RoundedRect", "Circle", "Diamond"]
+        onActivated: shapeHolder.text = currentText
+        Component.onCompleted: {
+            const i = model.indexOf(shapeHolder.text);
+            currentIndex = i >= 0 ? i : 0;
+            if (!shapeHolder.text) shapeHolder.text = currentText;
+        }
     }
 
     SpinBox {
         id: sizeSpin
         Kirigami.FormData.label: i18n("Day size (px):")
         from: 4; to: 64; stepSize: 1
-        value: Defaults.Layout.daySize
     }
 
     SpinBox {
         id: gapSpin
         Kirigami.FormData.label: i18n("Gap (px):")
         from: 0; to: 20; stepSize: 1
-        value: Defaults.Layout.gap
     }
 
     Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Range") }
