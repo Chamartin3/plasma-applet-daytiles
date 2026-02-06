@@ -16,11 +16,12 @@ Kirigami.FormLayout {
     property alias cfg_futureFade:       futureFadeSlider.value
     property alias cfg_heatmapLow:       heatmapLowSlider.value
     property alias cfg_heatmapHigh:      heatmapHighSlider.value
-    property alias cfg_alternationMode:  altModeCombo.currentValue
+    property alias cfg_alternationMode:  altModeHolder.text
     property alias cfg_alternationSize:  altSizeSpin.value
 
     TextField { id: paletteStore;    visible: false }
     TextField { id: highlightsStore; visible: false }
+    TextField { id: altModeHolder;   visible: false }
 
     Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Colors") }
 
@@ -87,15 +88,14 @@ Kirigami.FormLayout {
             { label: i18n("Per year"),   value: "year"   },
             { label: i18n("Custom"),     value: "custom" },
         ]
-        currentIndex: 3
+        onActivated: altModeHolder.text = model[currentIndex].value
     }
 
     SpinBox {
         id: altSizeSpin
         Kirigami.FormData.label: i18n("Alternation size:")
         from: 1; to: 365; stepSize: 1
-        value: 7
-        enabled: altModeCombo.currentValue === "custom"
+        enabled: altModeHolder.text === "custom"
     }
 
     ColorField {
@@ -267,7 +267,10 @@ Kirigami.FormLayout {
             }
         } catch (e) {}
         for (let i = 0; i < altModeCombo.model.length; ++i) {
-            if (altModeCombo.model[i].value === altModeCombo.currentValue) { altModeCombo.currentIndex = i; break; }
+            if (altModeCombo.model[i].value === altModeHolder.text) { altModeCombo.currentIndex = i; break; }
+        }
+        if (!altModeHolder.text && altModeCombo.model.length > 0) {
+            altModeHolder.text = altModeCombo.model[altModeCombo.currentIndex].value;
         }
     }
 }
