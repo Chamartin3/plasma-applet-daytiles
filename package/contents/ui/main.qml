@@ -174,16 +174,6 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            Label {
-                text: qsTr("Click a tile to add an event")
-                opacity: 0.6
-            }
-            Item { Layout.fillWidth: true }
-            Button {
-                text: qsTr("Configure")
-                icon.name: "configure"
-                onClicked: plasmoid.action("configure").trigger()
-            }
             Item { Layout.fillWidth: true }
             Label {
                 text: qsTr("%1 events").arg(root.parsedEvents().length)
