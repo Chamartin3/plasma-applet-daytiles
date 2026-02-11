@@ -118,8 +118,10 @@ Item {
             Layout.fillWidth: true
             text: plasmoid.configuration.title || ""
             visible: text.length > 0
-            font.pixelSize: 18
+            font.pixelSize: plasmoid.configuration.titleFontSize || 18
+            font.family: plasmoid.configuration.titleFontFamily || font.family
             font.bold: true
+            color: plasmoid.configuration.titleColor || PlasmaCore.Theme.textColor
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
         }
