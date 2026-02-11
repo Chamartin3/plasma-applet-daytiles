@@ -8,7 +8,10 @@ import "../fields"
 Kirigami.FormLayout {
     id: form
 
-    property alias cfg_title:          titleField.text
+    property alias cfg_title:           titleField.text
+    property alias cfg_titleFontSize:   titleSizeSpin.value
+    property alias cfg_titleFontFamily: titleFontCombo.editText
+    property alias cfg_titleColor:      titleColorField.text
     property alias cfg_layout:         layoutHolder.text
     property alias cfg_startDate:      startField.text
     property alias cfg_endDate:        endField.text
@@ -28,6 +31,25 @@ Kirigami.FormLayout {
         id: titleField
         Kirigami.FormData.label: i18n("Title:")
         placeholderText: i18n("optional")
+    }
+
+    SpinBox {
+        id: titleSizeSpin
+        Kirigami.FormData.label: i18n("Title size (px):")
+        from: 6; to: 72; stepSize: 1
+    }
+
+    ComboBox {
+        id: titleFontCombo
+        Kirigami.FormData.label: i18n("Title font:")
+        editable: true
+        model: Qt.fontFamilies()
+    }
+
+    ColorField {
+        id: titleColorField
+        Kirigami.FormData.label: i18n("Title color:")
+        placeholderText: i18n("theme default")
     }
 
     Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Layout") }
