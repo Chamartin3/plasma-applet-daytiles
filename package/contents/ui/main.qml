@@ -83,6 +83,9 @@ Item {
             daysPerRow:     c.daysPerRow || Defaults.Layout.daysPerRow,
             showLabels:     c.showLabels === true,
             labelWidth:     Defaults.Layout.labelWidth,
+            labelFontSize:   c.labelFontSize || 0,
+            labelFontFamily: c.labelFontFamily || "",
+            labelColor:      c.labelColor || "",
             events:         {},
             colors:         colors,
         };
@@ -142,6 +145,9 @@ Item {
                 plasmoid.configuration.daysPerRow;
                 plasmoid.configuration.startDayOfWeek;
                 plasmoid.configuration.showLabels;
+                plasmoid.configuration.labelFontSize;
+                plasmoid.configuration.labelFontFamily;
+                plasmoid.configuration.labelColor;
                 plasmoid.configuration.pastFade;
                 plasmoid.configuration.futureFade;
                 plasmoid.configuration.highlightCurrent;
