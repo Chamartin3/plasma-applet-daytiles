@@ -18,6 +18,9 @@ Kirigami.FormLayout {
     property alias cfg_daysPerRow:     daysPerRowSpin.value
     property alias cfg_startDayOfWeek: dowHolder.value
     property alias cfg_showLabels:     showLabelsCheck.checked
+    property alias cfg_labelFontSize:   labelSizeSpin.value
+    property alias cfg_labelFontFamily: labelFontCombo.editText
+    property alias cfg_labelColor:      labelColorField.text
     property alias cfg_dateFormat:     dateFormatField.text
     property alias cfg_shape:          shapeHolder.text
     property alias cfg_daySize:        sizeSpin.value
@@ -85,6 +88,31 @@ Kirigami.FormLayout {
         id: showLabelsCheck
         Kirigami.FormData.label: i18n("Row labels:")
         text: i18n("Show month/week names")
+    }
+
+    SpinBox {
+        id: labelSizeSpin
+        Kirigami.FormData.label: i18n("Label size (px):")
+        from: 0; to: 72; stepSize: 1
+        enabled: showLabelsCheck.checked
+        ToolTip.visible: hovered
+        ToolTip.delay: 400
+        ToolTip.text: i18n("0 = auto (based on tile size)")
+    }
+
+    ComboBox {
+        id: labelFontCombo
+        Kirigami.FormData.label: i18n("Label font:")
+        editable: true
+        model: Qt.fontFamilies()
+        enabled: showLabelsCheck.checked
+    }
+
+    ColorField {
+        id: labelColorField
+        Kirigami.FormData.label: i18n("Label color:")
+        placeholderText: i18n("theme default")
+        enabled: showLabelsCheck.checked
     }
 
     TextField {

@@ -619,6 +619,9 @@ var DTLib = (() => {
       startDayOfWeek,
       showLabels,
       labelWidth,
+      labelFontSize,
+      labelFontFamily,
+      labelColor,
       shape,
       events,
       startDate: begin,
@@ -676,12 +679,17 @@ var DTLib = (() => {
     }
     let offsetX = 0;
     if (showLabels) {
+      const resolvedLabelSize = (labelFontSize && labelFontSize > 0)
+        ? labelFontSize
+        : Math.max(8, Math.round(squareSize * 0.55));
       const labelEls = labels.map(({ row: r, text }) => {
         const el = document.createElementNS(SVG_NS2, "text");
         el.setAttribute("x", "0");
         el.setAttribute("y", String(r * (squareSize + gap) + squareSize * 0.7));
         el.setAttribute("class", ROW_LABEL_CLASS);
-        el.setAttribute("font-size", String(Math.max(8, Math.round(squareSize * 0.55))));
+        el.setAttribute("font-size", String(resolvedLabelSize));
+        if (labelFontFamily) el.setAttribute("font-family", labelFontFamily);
+        if (labelColor) el.setAttribute("fill", labelColor);
         el.textContent = text;
         svgElement.appendChild(el);
         return el;
