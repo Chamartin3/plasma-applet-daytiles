@@ -111,8 +111,8 @@ Item {
     Plasmoid.compactRepresentation: CompactRepresentation {}
 
     Plasmoid.fullRepresentation: ColumnLayout {
-        Layout.minimumWidth: 480
-        Layout.minimumHeight: 320
+        Layout.minimumWidth: 120
+        Layout.minimumHeight: 80
         Layout.preferredWidth: 820
         Layout.preferredHeight: 600
         spacing: 4
