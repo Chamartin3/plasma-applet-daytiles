@@ -180,15 +180,6 @@ Item {
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Item { Layout.fillWidth: true }
-            Label {
-                text: qsTr("%1 events").arg(root.parsedEvents().length)
-                opacity: 0.7
-            }
-        }
-
         EventListPanel {
             id: dayList
             Layout.fillWidth: true
