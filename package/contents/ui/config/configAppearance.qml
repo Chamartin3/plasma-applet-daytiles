@@ -188,7 +188,7 @@ Kirigami.FormLayout {
                 Button {
                     flat: true
                     icon.name: "edit-delete"
-                    onClicked: { highlights.remove(row.rowIndex); form.writeHighlights(); }
+                    onClicked: form.removeHighlightAt(row.rowIndex)
                 }
             }
         }
@@ -248,7 +248,16 @@ Kirigami.FormLayout {
             if (!h.color) continue;
             arr.push({ kind: h.kind, value: h.value, color: h.color });
         }
-        highlightsStore.text = JSON.stringify(arr);
+        const next = JSON.stringify(arr);
+        if (highlightsStore.text === next) {
+            highlightsStore.text = "";
+        }
+        highlightsStore.text = next;
+    }
+
+    function removeHighlightAt(idx) {
+        highlights.remove(idx);
+        Qt.callLater(writeHighlights);
     }
 
     Component.onCompleted: {
