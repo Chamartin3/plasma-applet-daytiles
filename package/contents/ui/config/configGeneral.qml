@@ -72,7 +72,8 @@ Kirigami.FormLayout {
     SpinBox {
         id: daysPerRowSpin
         Kirigami.FormData.label: i18n("Days per row (Custom):")
-        from: 1; to: 60; stepSize: 1
+        from: 1; to: 366; stepSize: 1
+        editable: true
     }
 
     ComboBox {
