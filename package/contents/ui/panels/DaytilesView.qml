@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import org.kde.plasma.core 2.0 as PlasmaCore
+import QtQuick
+import QtQuick.Controls
+import org.kde.kirigami as Kirigami
 import "../daytilesRunner.js" as Runner
 
 Item {
@@ -43,8 +43,8 @@ Item {
 
     function apply() {
         const cfgWithTheme = Object.assign({}, config, {
-            themeFg: PlasmaCore.Theme.textColor.toString(),
-            themeBg: PlasmaCore.Theme.backgroundColor.toString(),
+            themeFg: Kirigami.Theme.textColor.toString(),
+            themeBg: Kirigami.Theme.backgroundColor.toString(),
         });
         try {
             const r = Runner.renderToSvgWithTiles(cfgWithTheme, events);

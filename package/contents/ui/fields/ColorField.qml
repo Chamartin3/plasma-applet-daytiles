@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Dialogs
 
 RowLayout {
     id: root
@@ -29,7 +29,7 @@ RowLayout {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                if (swatch.color != "transparent") dialog.color = swatch.color;
+                if (swatch.color != "transparent") dialog.selectedColor = swatch.color;
                 dialog.open();
             }
         }
@@ -45,9 +45,8 @@ RowLayout {
     ColorDialog {
         id: dialog
         title: qsTr("Choose color")
-        showAlphaChannel: false
         onAccepted: {
-            const c = dialog.color;
+            const c = dialog.selectedColor;
             const hex = function(v) {
                 const h = Math.round(v * 255).toString(16);
                 return h.length < 2 ? "0" + h : h;

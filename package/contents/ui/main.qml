@@ -1,34 +1,35 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.plasmoid 2.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
 import "defaults.js" as Defaults
 import "panels"
 
-Item {
+PlasmoidItem {
     id: root
 
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
 
     function parsedEvents() {
-        try { return JSON.parse(plasmoid.configuration.eventsJson || "[]"); }
+        try { return JSON.parse(Plasmoid.configuration.eventsJson || "[]"); }
         catch (e) { return []; }
     }
 
     function parsedPalette() {
-        try { return JSON.parse(plasmoid.configuration.paletteJson || "{}"); }
+        try { return JSON.parse(Plasmoid.configuration.paletteJson || "{}"); }
         catch (e) { return {}; }
     }
 
     function parsedTypeColors() {
-        try { return JSON.parse(plasmoid.configuration.eventTypeColorsJson || "{}"); }
+        try { return JSON.parse(Plasmoid.configuration.eventTypeColorsJson || "{}"); }
         catch (e) { return {}; }
     }
 
     function parsedHighlights() {
         try {
-            const arr = JSON.parse(plasmoid.configuration.highlightsJson || "[]");
+            const arr = JSON.parse(Plasmoid.configuration.highlightsJson || "[]");
             return Array.isArray(arr) ? arr : [];
         } catch (e) { return []; }
     }
@@ -45,7 +46,7 @@ Item {
     }
 
     function buildConfig() {
-        const c = plasmoid.configuration;
+        const c = Plasmoid.configuration;
         const dflt = Defaults.defaultRange();
         const palette = parsedPalette();
         const altMode = (c.alternationMode || Defaults.Alternation.mode).toLowerCase();
@@ -94,7 +95,7 @@ Item {
     function appendEvent(entry) {
         const arr = parsedEvents();
         arr.push(entry);
-        plasmoid.configuration.eventsJson = JSON.stringify(arr);
+        Plasmoid.configuration.eventsJson = JSON.stringify(arr);
     }
 
     function removeEvent(entry) {
@@ -105,12 +106,14 @@ Item {
                   && (e.note || "") === (entry.note || "")
                   && (e.color || "") === (entry.color || ""));
         });
-        plasmoid.configuration.eventsJson = JSON.stringify(arr);
+        Plasmoid.configuration.eventsJson = JSON.stringify(arr);
     }
 
-    Plasmoid.compactRepresentation: CompactRepresentation {}
+    compactRepresentation: CompactRepresentation {
+        onClicked: root.expanded = !root.expanded
+    }
 
-    Plasmoid.fullRepresentation: ColumnLayout {
+    fullRepresentation: ColumnLayout {
         Layout.minimumWidth: 120
         Layout.minimumHeight: 80
         Layout.preferredWidth: 820
@@ -119,12 +122,12 @@ Item {
 
         Label {
             Layout.fillWidth: true
-            text: plasmoid.configuration.title || ""
+            text: Plasmoid.configuration.title || ""
             visible: text.length > 0
-            font.pixelSize: plasmoid.configuration.titleFontSize || 18
-            font.family: plasmoid.configuration.titleFontFamily || font.family
+            font.pixelSize: Plasmoid.configuration.titleFontSize || 18
+            font.family: Plasmoid.configuration.titleFontFamily || font.family
             font.bold: true
-            color: plasmoid.configuration.titleColor || PlasmaCore.Theme.textColor
+            color: Plasmoid.configuration.titleColor || Kirigami.Theme.textColor
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
         }
@@ -133,36 +136,36 @@ Item {
             id: view
             Layout.fillWidth: true
             Layout.fillHeight: true
-            dateFormat: plasmoid.configuration.dateFormat || Defaults.Layout.dateFormat
+            dateFormat: Plasmoid.configuration.dateFormat || Defaults.Layout.dateFormat
 
             config: {
-                plasmoid.configuration.layout;
-                plasmoid.configuration.shape;
-                plasmoid.configuration.startDate;
-                plasmoid.configuration.endDate;
-                plasmoid.configuration.daySize;
-                plasmoid.configuration.gap;
-                plasmoid.configuration.daysPerRow;
-                plasmoid.configuration.startDayOfWeek;
-                plasmoid.configuration.showLabels;
-                plasmoid.configuration.labelFontSize;
-                plasmoid.configuration.labelFontFamily;
-                plasmoid.configuration.labelColor;
-                plasmoid.configuration.pastFade;
-                plasmoid.configuration.futureFade;
-                plasmoid.configuration.highlightCurrent;
-                plasmoid.configuration.heatmap;
-                plasmoid.configuration.heatmapLow;
-                plasmoid.configuration.heatmapHigh;
-                plasmoid.configuration.alternationMode;
-                plasmoid.configuration.alternationSize;
-                plasmoid.configuration.paletteJson;
-                plasmoid.configuration.highlightsJson;
-                plasmoid.configuration.eventTypeColorsJson;
+                Plasmoid.configuration.layout;
+                Plasmoid.configuration.shape;
+                Plasmoid.configuration.startDate;
+                Plasmoid.configuration.endDate;
+                Plasmoid.configuration.daySize;
+                Plasmoid.configuration.gap;
+                Plasmoid.configuration.daysPerRow;
+                Plasmoid.configuration.startDayOfWeek;
+                Plasmoid.configuration.showLabels;
+                Plasmoid.configuration.labelFontSize;
+                Plasmoid.configuration.labelFontFamily;
+                Plasmoid.configuration.labelColor;
+                Plasmoid.configuration.pastFade;
+                Plasmoid.configuration.futureFade;
+                Plasmoid.configuration.highlightCurrent;
+                Plasmoid.configuration.heatmap;
+                Plasmoid.configuration.heatmapLow;
+                Plasmoid.configuration.heatmapHigh;
+                Plasmoid.configuration.alternationMode;
+                Plasmoid.configuration.alternationSize;
+                Plasmoid.configuration.paletteJson;
+                Plasmoid.configuration.highlightsJson;
+                Plasmoid.configuration.eventTypeColorsJson;
                 return root.buildConfig();
             }
             events: {
-                plasmoid.configuration.eventsJson;
+                Plasmoid.configuration.eventsJson;
                 return root.parsedEvents();
             }
 

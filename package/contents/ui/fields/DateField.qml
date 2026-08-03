@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 RowLayout {
     id: root
@@ -26,7 +26,7 @@ RowLayout {
         id: field
         Layout.fillWidth: true
         placeholderText: "YYYY-MM-DD"
-        validator: RegExpValidator { regExp: /^(\d{4}-\d{2}-\d{2})?$/ }
+        validator: RegularExpressionValidator { regularExpression: /^(\d{4}-\d{2}-\d{2})?$/ }
         color: root.invalid ? "#d04040" : palette.text
         ToolTip.visible: root.invalid && hovered
         ToolTip.delay: 200
