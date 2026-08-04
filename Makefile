@@ -8,15 +8,15 @@ sync:
 	cp vendor/daytiles/index.js $(PKG)/contents/web/daytiles.js
 
 install:
-	kpackagetool5 -t Plasma/Applet --install $(PKG) 2>/dev/null || \
-	    kpackagetool5 -t Plasma/Applet --upgrade $(PKG)
+	kpackagetool6 -t Plasma/Applet --install $(PKG) 2>/dev/null || \
+	    kpackagetool6 -t Plasma/Applet --upgrade $(PKG)
 
 upgrade:
-	kpackagetool5 -t Plasma/Applet --upgrade $(PKG) 2>/dev/null || \
-	    kpackagetool5 -t Plasma/Applet --install $(PKG)
+	kpackagetool6 -t Plasma/Applet --upgrade $(PKG) 2>/dev/null || \
+	    kpackagetool6 -t Plasma/Applet --install $(PKG)
 
 uninstall:
-	kpackagetool5 -t Plasma/Applet --remove $(PLASMOID_ID)
+	kpackagetool6 -t Plasma/Applet --remove $(PLASMOID_ID)
 
 run: upgrade
 	plasmoidviewer -a $(PLASMOID_ID) -s 900x650
