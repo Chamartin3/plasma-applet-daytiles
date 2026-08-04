@@ -1,8 +1,10 @@
 # Daytiles
 
-A KDE Plasma 5 desktop widget that renders a [daytiles](https://github.com/Chamartin3/daytiles) calendar — a compact grid where every day is a tile you can color, highlight, and click. Useful for tracking events, habits, deadlines, or any per-day signal at a glance.
+A KDE Plasma 6 desktop widget that renders a [daytiles](https://github.com/Chamartin3/daytiles) calendar — a compact grid where every day is a tile you can color, highlight, and click. Useful for tracking events, habits, deadlines, or any per-day signal at a glance.
 
-Targets **Plasma 5.27** on **Qt 5.15**.
+Targets **Plasma 6** on **Qt 6**.
+
+> Using Plasma 5? Install `v0.3-plasma5` from the `plasma5` branch.
 
 ![desktop](assets/screenshots/desktop.png)
 
@@ -18,13 +20,13 @@ Targets **Plasma 5.27** on **Qt 5.15**.
 ## Install
 
 ```sh
-kpackagetool5 -t Plasma/Applet --install package/
+kpackagetool6 -t Plasma/Applet --install package/
 ```
 
 To upgrade an already-installed copy:
 
 ```sh
-kpackagetool5 -t Plasma/Applet --upgrade package/
+kpackagetool6 -t Plasma/Applet --upgrade package/
 ```
 
 Or use the Makefile:
