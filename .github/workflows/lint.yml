@@ -12,6 +12,11 @@ jobs:
       - name: validate metadata.json
         run: |
           python3 -c "import json,sys; json.load(open('package/metadata.json')); print('ok')"
+      - name: shared files match across plasma 5/6 packages
+        run: |
+          for f in ui/daytilesRunner.js ui/defaults.js config/main.xml; do
+            diff package/contents/$f package-plasma5/contents/$f
+          done
       - name: validate eventsJson default
         run: |
           python3 - <<'PY'
