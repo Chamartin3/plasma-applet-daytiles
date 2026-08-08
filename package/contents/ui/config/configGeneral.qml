@@ -2,15 +2,16 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import org.kde.kcmutils as KCM
 import "../defaults.js" as Defaults
 import "../fields"
 
-Kirigami.FormLayout {
-    id: form
+KCM.SimpleKCM {
+    id: page
 
     property alias cfg_title:           titleField.text
     property alias cfg_titleFontSize:   titleSizeSpin.value
-    property alias cfg_titleFontFamily: titleFontCombo.editText
+    property string cfg_titleFontFamily
     property alias cfg_titleColor:      titleColorField.text
     property alias cfg_layout:         layoutHolder.text
     property alias cfg_startDate:      startField.text
@@ -19,198 +20,208 @@ Kirigami.FormLayout {
     property alias cfg_startDayOfWeek: dowHolder.value
     property alias cfg_showLabels:     showLabelsCheck.checked
     property alias cfg_labelFontSize:   labelSizeSpin.value
-    property alias cfg_labelFontFamily: labelFontCombo.editText
+    property string cfg_labelFontFamily
     property alias cfg_labelColor:      labelColorField.text
     property alias cfg_dateFormat:     dateFormatField.text
     property alias cfg_shape:          shapeHolder.text
     property alias cfg_daySize:        sizeSpin.value
     property alias cfg_gap:            gapSpin.value
 
-    TextField { id: layoutHolder; visible: false }
-    TextField { id: shapeHolder;  visible: false }
-    Item      { id: dowHolder;    visible: false; property int value: 1 }
+    Kirigami.FormLayout {
+        id: form
 
-    TextField {
-        id: titleField
-        Kirigami.FormData.label: i18n("Title:")
-        placeholderText: i18n("optional")
-    }
+        TextField { id: layoutHolder; visible: false }
+        TextField { id: shapeHolder;  visible: false }
+        Item      { id: dowHolder;    visible: false; property int value: 1 }
 
-    SpinBox {
-        id: titleSizeSpin
-        Kirigami.FormData.label: i18n("Title size (px):")
-        from: 6; to: 72; stepSize: 1
-    }
-
-    ComboBox {
-        id: titleFontCombo
-        Kirigami.FormData.label: i18n("Title font:")
-        editable: true
-        model: Qt.fontFamilies()
-    }
-
-    ColorField {
-        id: titleColorField
-        Kirigami.FormData.label: i18n("Title color:")
-        placeholderText: i18n("theme default")
-    }
-
-    Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Layout") }
-
-    ComboBox {
-        id: layoutCombo
-        Kirigami.FormData.label: i18n("Mode:")
-        model: ["Month", "Week", "Weekday", "Custom"]
-        onActivated: layoutHolder.text = currentText
-        Component.onCompleted: {
-            const i = model.indexOf(layoutHolder.text);
-            currentIndex = i >= 0 ? i : 0;
-            if (!layoutHolder.text) layoutHolder.text = currentText;
+        TextField {
+            id: titleField
+            Kirigami.FormData.label: i18n("Title:")
+            placeholderText: i18n("optional")
         }
-    }
 
-    SpinBox {
-        id: daysPerRowSpin
-        Kirigami.FormData.label: i18n("Days per row (Custom):")
-        from: 1; to: 366; stepSize: 1
-        editable: true
-    }
-
-    ComboBox {
-        id: startDowCombo
-        Kirigami.FormData.label: i18n("Week starts on:")
-        model: [i18n("Sunday"), i18n("Monday"), i18n("Tuesday"), i18n("Wednesday"),
-                i18n("Thursday"), i18n("Friday"), i18n("Saturday")]
-        onActivated: dowHolder.value = currentIndex
-        Component.onCompleted: currentIndex = dowHolder.value
-    }
-
-    CheckBox {
-        id: showLabelsCheck
-        Kirigami.FormData.label: i18n("Row labels:")
-        text: i18n("Show month/week names")
-    }
-
-    SpinBox {
-        id: labelSizeSpin
-        Kirigami.FormData.label: i18n("Label size (px):")
-        from: 0; to: 72; stepSize: 1
-        enabled: showLabelsCheck.checked
-        ToolTip.visible: hovered
-        ToolTip.delay: 400
-        ToolTip.text: i18n("0 = auto (based on tile size)")
-    }
-
-    ComboBox {
-        id: labelFontCombo
-        Kirigami.FormData.label: i18n("Label font:")
-        editable: true
-        model: Qt.fontFamilies()
-        enabled: showLabelsCheck.checked
-    }
-
-    ColorField {
-        id: labelColorField
-        Kirigami.FormData.label: i18n("Label color:")
-        placeholderText: i18n("theme default")
-        enabled: showLabelsCheck.checked
-    }
-
-    TextField {
-        id: dateFormatField
-        Kirigami.FormData.label: i18n("Tooltip date format:")
-        placeholderText: Defaults.Layout.dateFormat
-        ToolTip.visible: hovered
-        ToolTip.delay: 400
-        ToolTip.text: i18n("Qt format tokens: yyyy yy MM M dd d ddd dddd MMM MMMM")
-    }
-
-    Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Tiles") }
-
-    ComboBox {
-        id: shapeCombo
-        Kirigami.FormData.label: i18n("Shape:")
-        model: ["Rectangle", "RoundedRect", "Circle", "Diamond"]
-        onActivated: shapeHolder.text = currentText
-        Component.onCompleted: {
-            const i = model.indexOf(shapeHolder.text);
-            currentIndex = i >= 0 ? i : 0;
-            if (!shapeHolder.text) shapeHolder.text = currentText;
+        SpinBox {
+            id: titleSizeSpin
+            Kirigami.FormData.label: i18n("Title size (px):")
+            from: 6; to: 72; stepSize: 1
+            editable: true
         }
-    }
 
-    SpinBox {
-        id: sizeSpin
-        Kirigami.FormData.label: i18n("Day size (px):")
-        from: 4; to: 64; stepSize: 1
-    }
-
-    SpinBox {
-        id: gapSpin
-        Kirigami.FormData.label: i18n("Gap (px):")
-        from: 0; to: 20; stepSize: 1
-    }
-
-    Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Range") }
-
-    DateField {
-        id: startField
-        Kirigami.FormData.label: i18n("Start date:")
-        placeholderText: "2025-01-01"
-    }
-
-    DateField {
-        id: endField
-        Kirigami.FormData.label: i18n("End date:")
-        placeholderText: "2025-12-31"
-    }
-
-    RowLayout {
-        Kirigami.FormData.label: i18n("Presets:")
-        spacing: 4
-        Button {
-            text: i18n("This month")
-            onClicked: form.applyPreset("month")
+        ComboBox {
+            id: titleFontCombo
+            Kirigami.FormData.label: i18n("Title font:")
+            // index 0 = theme default, stored as ""
+            model: [i18n("Theme default")].concat(Qt.fontFamilies())
+            onActivated: page.cfg_titleFontFamily = currentIndex > 0 ? currentText : ""
+            Component.onCompleted: currentIndex = Math.max(0, model.indexOf(page.cfg_titleFontFamily))
         }
-        Button {
-            text: i18n("This quarter")
-            onClicked: form.applyPreset("quarter")
-        }
-        Button {
-            text: i18n("This year")
-            onClicked: form.applyPreset("year")
-        }
-        Button {
-            text: i18n("Last 12 months")
-            onClicked: form.applyPreset("rolling12")
-        }
-    }
 
-    function _pad(n) { return n < 10 ? "0" + n : "" + n; }
-    function _iso(d) { return d.getFullYear() + "-" + _pad(d.getMonth() + 1) + "-" + _pad(d.getDate()); }
-
-    function applyPreset(kind) {
-        const now = new Date();
-        const y = now.getFullYear();
-        const m = now.getMonth();
-        let s, e;
-        if (kind === "month") {
-            s = new Date(y, m, 1);
-            e = new Date(y, m + 1, 0);
-        } else if (kind === "quarter") {
-            const qStart = Math.floor(m / 3) * 3;
-            s = new Date(y, qStart, 1);
-            e = new Date(y, qStart + 3, 0);
-        } else if (kind === "year") {
-            s = new Date(y, 0, 1);
-            e = new Date(y, 11, 31);
-        } else if (kind === "rolling12") {
-            e = new Date(y, m + 1, 0);
-            s = new Date(y - 1, m + 1, 1);
+        ColorField {
+            id: titleColorField
+            Kirigami.FormData.label: i18n("Title color:")
+            placeholderText: i18n("theme default")
         }
-        if (s && e) {
-            startField.text = _iso(s);
-            endField.text   = _iso(e);
+
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Layout") }
+
+        ComboBox {
+            id: layoutCombo
+            Kirigami.FormData.label: i18n("Mode:")
+            model: ["Month", "Week", "Weekday", "Custom"]
+            onActivated: layoutHolder.text = currentText
+            Component.onCompleted: {
+                const i = model.indexOf(layoutHolder.text);
+                currentIndex = i >= 0 ? i : 0;
+                if (!layoutHolder.text) layoutHolder.text = currentText;
+            }
+        }
+
+        SpinBox {
+            id: daysPerRowSpin
+            Kirigami.FormData.label: i18n("Days per row (Custom):")
+            from: 1; to: 366; stepSize: 1
+            editable: true
+        }
+
+        ComboBox {
+            id: startDowCombo
+            Kirigami.FormData.label: i18n("Week starts on:")
+            model: [i18n("Sunday"), i18n("Monday"), i18n("Tuesday"), i18n("Wednesday"),
+                    i18n("Thursday"), i18n("Friday"), i18n("Saturday")]
+            onActivated: dowHolder.value = currentIndex
+            Component.onCompleted: currentIndex = dowHolder.value
+        }
+
+        CheckBox {
+            id: showLabelsCheck
+            Kirigami.FormData.label: i18n("Row labels:")
+            text: i18n("Show month/week names")
+        }
+
+        SpinBox {
+            id: labelSizeSpin
+            Kirigami.FormData.label: i18n("Label size (px):")
+            from: 0; to: 72; stepSize: 1
+            editable: true
+            enabled: showLabelsCheck.checked
+            ToolTip.visible: hovered
+            ToolTip.delay: 400
+            ToolTip.text: i18n("0 = auto (based on tile size)")
+        }
+
+        ComboBox {
+            id: labelFontCombo
+            Kirigami.FormData.label: i18n("Label font:")
+            // index 0 = theme default, stored as ""
+            model: [i18n("Theme default")].concat(Qt.fontFamilies())
+            onActivated: page.cfg_labelFontFamily = currentIndex > 0 ? currentText : ""
+            Component.onCompleted: currentIndex = Math.max(0, model.indexOf(page.cfg_labelFontFamily))
+            enabled: showLabelsCheck.checked
+        }
+
+        ColorField {
+            id: labelColorField
+            Kirigami.FormData.label: i18n("Label color:")
+            placeholderText: i18n("theme default")
+            enabled: showLabelsCheck.checked
+        }
+
+        TextField {
+            id: dateFormatField
+            Kirigami.FormData.label: i18n("Tooltip date format:")
+            placeholderText: Defaults.Layout.dateFormat
+            ToolTip.visible: hovered
+            ToolTip.delay: 400
+            ToolTip.text: i18n("Qt format tokens: yyyy yy MM M dd d ddd dddd MMM MMMM")
+        }
+
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Tiles") }
+
+        ComboBox {
+            id: shapeCombo
+            Kirigami.FormData.label: i18n("Shape:")
+            model: ["Rectangle", "RoundedRect", "Circle", "Diamond"]
+            onActivated: shapeHolder.text = currentText
+            Component.onCompleted: {
+                const i = model.indexOf(shapeHolder.text);
+                currentIndex = i >= 0 ? i : 0;
+                if (!shapeHolder.text) shapeHolder.text = currentText;
+            }
+        }
+
+        SpinBox {
+            id: sizeSpin
+            Kirigami.FormData.label: i18n("Day size (px):")
+            from: 4; to: 64; stepSize: 1
+        }
+
+        SpinBox {
+            id: gapSpin
+            Kirigami.FormData.label: i18n("Gap (px):")
+            from: 0; to: 20; stepSize: 1
+        }
+
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Range") }
+
+        DateField {
+            id: startField
+            Kirigami.FormData.label: i18n("Start date:")
+            placeholderText: "2025-01-01"
+        }
+
+        DateField {
+            id: endField
+            Kirigami.FormData.label: i18n("End date:")
+            placeholderText: "2025-12-31"
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Presets:")
+            spacing: 4
+            Button {
+                text: i18n("This month")
+                onClicked: form.applyPreset("month")
+            }
+            Button {
+                text: i18n("This quarter")
+                onClicked: form.applyPreset("quarter")
+            }
+            Button {
+                text: i18n("This year")
+                onClicked: form.applyPreset("year")
+            }
+            Button {
+                text: i18n("Last 12 months")
+                onClicked: form.applyPreset("rolling12")
+            }
+        }
+
+        function _pad(n) { return n < 10 ? "0" + n : "" + n; }
+        function _iso(d) { return d.getFullYear() + "-" + _pad(d.getMonth() + 1) + "-" + _pad(d.getDate()); }
+
+        function applyPreset(kind) {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = now.getMonth();
+            let s, e;
+            if (kind === "month") {
+                s = new Date(y, m, 1);
+                e = new Date(y, m + 1, 0);
+            } else if (kind === "quarter") {
+                const qStart = Math.floor(m / 3) * 3;
+                s = new Date(y, qStart, 1);
+                e = new Date(y, qStart + 3, 0);
+            } else if (kind === "year") {
+                s = new Date(y, 0, 1);
+                e = new Date(y, 11, 31);
+            } else if (kind === "rolling12") {
+                e = new Date(y, m + 1, 0);
+                s = new Date(y - 1, m + 1, 1);
+            }
+            if (s && e) {
+                startField.text = _iso(s);
+                endField.text   = _iso(e);
+            }
         }
     }
 }
