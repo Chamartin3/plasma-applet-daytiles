@@ -16,7 +16,7 @@
         "ServiceTypes": [
             "Plasma/Applet"
         ],
-        "Version": "0.9",
+        "Version": "0.9.1",
         "Website": "https://github.com/Chamartin3/daytiles"
     },
     "X-Plasma-API": "declarativeappletscript",

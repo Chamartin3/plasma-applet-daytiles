@@ -13,7 +13,7 @@
         "Id": "com.ogspain.daytiles",
         "License": "MIT",
         "Name": "Daytiles",
-        "Version": "0.9",
+        "Version": "0.9.1",
         "Website": "https://github.com/Chamartin3/daytiles"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
